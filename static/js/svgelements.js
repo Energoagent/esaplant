@@ -1,4 +1,51 @@
 
+//Общие
+
+SERVER_LOCATION = 'vpn.energoagent.com:8787';
+
+newAd = function(paramId, initX, initY, labelText) {	
+	let ad = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+	ad.id = '';
+	ad.setAttribute('x', initX);
+	ad.setAttribute('y', initY);
+	ad.innerHTML = labelText;
+	ad.setAttribute('class', 'parameters');
+	ad.blink = function() {  // не работает
+		ad.id = 'alarm_blink';
+	};
+	return ad;
+}
+
+
+newParameterBlock = function(paramId, initX, initY, labelText, labelX) {	
+	let parameterBlock = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+	parameterBlock.id = paramId + '_block';
+
+	let parameterName = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+	with (parameterName) {
+		id = paramId + '_label';
+		setAttribute('x', initX);
+		setAttribute('y', initY);
+		innerHTML = labelText;
+		setAttribute('class', 'parameters');
+	};
+
+	let parameterValue = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+	with (parameterValue) {
+		id = paramId;
+		setAttribute('x', initX + labelX);
+		setAttribute('y', initY);
+		innerHTML = (labelX === 0)? '':'x';
+		setAttribute('class', 'parameters');
+		style.stroke = 'red';
+	};
+
+	parameterBlock.appendChild(parameterName);
+	parameterBlock.value = parameterBlock.appendChild(parameterValue);
+	return parameterBlock;
+}
+
+//------
 
 //Шаровая мельница
 
@@ -70,30 +117,6 @@ millRotationLeft = function(elemId, initX, initY, initScale) {
 	elm.setAttribute('stroke-width', '0.5');
 	elm.style.stroke = 'blue';
 	return elm;
-}
-
-newParameterBlock = function(paramId, initX, initY, labelText, labelX) {	
-	let parameterBlock = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	parameterBlock.id = paramId + '_block';
-
-	let parameterName = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-	parameterName.id = paramId + '_label';
-	parameterName.setAttribute('x', initX);
-	parameterName.setAttribute('y', initY);
-	parameterName.innerHTML = labelText;
-	parameterName.setAttribute('class', 'parameters');
-
-	let parameterValue = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-	parameterValue.id = paramId;
-	parameterValue.setAttribute('x', initX + labelX);
-	parameterValue.setAttribute('y', initY);
-	parameterValue.innerHTML = 'x';
-	parameterValue.setAttribute('class', 'parameters');
-	parameterValue.style.stroke = 'red';
-
-	parameterBlock.appendChild(parameterName);
-	parameterBlock.appendChild(parameterValue);
-	return parameterBlock;
 }
 
 newMillParameters = function(elemId, initX, initY) {	
@@ -232,10 +255,155 @@ const OIL_STATION =
 newOilStation = function(elemId, initX, initY, initScale) {
 	let os = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 	os.id = elemId;
-	os.innerHTML = OIL_STATION;
-	os.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
-	os.setAttribute('fill', 'none');
-	os.setAttribute('stroke-width', '0.5');
-	os.style.stroke = 'black';
+	with (os) {
+		innerHTML = OIL_STATION;
+		setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
+		setAttribute('fill', 'none');
+		setAttribute('stroke-width', '0.5');
+		style.stroke = 'black';
+	};
 	return os;
 }
+
+// ------
+
+// ленточный транспортер
+
+const CONVEYOR_TENSION_DRUM_SHAPE =
+`<circle cx="9" cy="9" r="2"/>
+<path d="M7,7 L11,7 L11,11 L7,11 L7,7 Z "/>
+<path d="M17,7 L20,7 L20,11 L17,11 L17,7 Z "/>
+<line x1="11" y1="7" x2="13" y2="11"/>
+<line x1="13" y1="11" x2="15" y2="7"/>
+<line x1="15" y1="7" x2="17" y2="11"/>`
+
+const CONVEYOR_MOTOR_DRUM_SHAPE =
+`<circle cx="9" cy="9" r="9"/>
+<circle cx="9" cy="9" r="2"/>
+<path d="M7,6 L0,19 L0,20 L18,20 L18,19 L11,6 L7,6"/>`
+
+newTensionDrum = function(elemId, initX, initY, initScale) {	
+	let convTension = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+	convTension.id = elemId + '_tn';
+	convTension.innerHTML = CONVEYOR_TENSION_DRUM_SHAPE;
+	convTension.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
+	convTension.setAttribute('fill', 'none');
+	convTension.setAttribute('stroke-width', '0.5');
+	convTension.style.stroke = 'black';
+	convTension.drum = convTension.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'circle'));
+	convTension.drum.setAttribute('cx', 9);
+	convTension.drum.setAttribute('cy', 9);
+	convTension.drum.setAttribute('r', 9);
+	convTension.drum.setAttribute('fill', 'gray');
+	convTension.drum.setAttribute('fill-opacity', '0.4');
+	convTension.drum.setAttribute('stroke-width', '0.5');
+	convTension.drum.style.stroke = 'black';
+	convTension.alarm = function() {
+		convTension.drum.setAttribute('fill', 'red');
+	};
+	return convTension;
+}
+
+newMotorDrum = function(elemId, initX, initY, initScale) {	
+	let convMotor = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+	with (convMotor) {
+		id = elemId + '_m';
+		innerHTML = CONVEYOR_MOTOR_DRUM_SHAPE;
+		setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
+		style.fill = 'none';
+		style.stroke = 'black';
+		setAttribute('stroke-width', '0.5');
+	};
+	convMotor.driver = convMotor.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'circle'));
+	convMotor.driver.setAttribute('cx', 9);
+	convMotor.driver.setAttribute('cy', 9);
+	convMotor.driver.setAttribute('r', 7);
+	convMotor.driver.setAttribute('fill', 'gray');
+	convMotor.driver.setAttribute('fill-opacity', '0.4');
+	convMotor.driver.setAttribute('stroke-width', '0.5');
+	convMotor.driver.style.stroke = 'black';
+	convMotor.run = function() {
+		convMotor.driver.setAttribute('fill', 'green');
+	};
+	return convMotor;
+}
+
+newConveyor = function(elemId, initX, initY, initLength, initAngle, initMiror, initScale) {
+	
+	conveyorJSON = {
+		'AGR': elemId,
+		'PRM': [
+			'ATS_WORK',		//УПП в работе
+			'SW_STATUS',
+			'ATS_RD',		//УПП готов
+			'ES_ATV',		// АС
+			'ES_NPU',
+			'ES_EXT',
+			'ES_CAB',
+			'ES_PULT',
+			'ALR_SPEED',	//ДКМС авария
+			'ALR_DKSL1',
+			'ALR_DKSL2',
+			'WRN_DKSL1',
+			'WRN_DKSL2',
+			'ES_BLOCK',
+			'GREEN_LP',
+			'RED_LP',
+			'StW1',
+			'StW2'
+		]
+	};
+	
+	requestProcessor = function() {
+		let req = new XMLHttpRequest();
+		if (!readyFlag) {return;}
+		req.open('POST', 'http://' + SERVER_LOCATION + '/params');
+		req.onreadystatechange = function() {
+			if(this.readyState === 4 && this.status === 200) {
+				readyFlag = true;
+				parameters = JSON.parse(this.response);
+				conveyor = mainUnit.getElementById('1_2');
+				conveyor.motor.run();
+				conveyor.drum.alarm();
+//				conveyor.DKSL1.blink();
+				}
+			else {
+				readyFlag = true;
+			};
+		};
+		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+		req.send(JSON.stringify(conveyorJSON));
+		readyFlag = false;
+	};
+
+	let convTape1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+	convTape1.setAttribute('x1', 9);
+	convTape1.setAttribute('x2', 9 + initLength);
+	convTape1.setAttribute('y1', 0);
+	convTape1.setAttribute('y2', 0);
+	let convTape2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+	convTape2.setAttribute('x1', 9);
+	convTape2.setAttribute('x2', 9 + initLength);
+	convTape2.setAttribute('y1', 18);
+	convTape2.setAttribute('y2', 18);
+	let conveyor = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+	with (conveyor) {
+		id = elemId; 
+		setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
+		style.fill = 'none';
+		style.stroke = 'black';
+		setAttribute('stroke-width', '0.5');
+		conveyor.motor = appendChild(newMotorDrum(elemId, initLength, 0, 1));
+		conveyor.DKSL1 = appendChild(newAd(elemId, initLength + 20, 0, 'ДКСЛ'));
+		conveyor.DKSL2 = appendChild(newAd(elemId, - 20, 0, 'ДКСЛ'));
+		conveyor.drum = appendChild(newTensionDrum(elemId, 0, 0, 1));
+		appendChild(convTape1);
+		appendChild(convTape2);
+	};
+	
+	setInterval(requestProcessor, 5000);
+	
+	return conveyor;
+}
+
+//-----
