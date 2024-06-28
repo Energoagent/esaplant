@@ -3,15 +3,25 @@
 
 SERVER_LOCATION = 'vpn.energoagent.com:8787';
 
-newAd = function(paramId, initX, initY, labelText) {	
+newAd = function(initX, initY, labelText) {	
 	let ad = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 	ad.id = '';
 	ad.setAttribute('x', initX);
 	ad.setAttribute('y', initY);
 	ad.innerHTML = labelText;
 	ad.setAttribute('class', 'parameters');
-	ad.blink = function() {  // не работает
+	ad.alarm = function() {
 		ad.id = 'alarm_blink';
+	};
+	ad.warning = function() {
+		ad.id = 'warn_blink';
+	};
+	ad.norm = function() {
+		ad.id = '';
+	};
+	ad.hide = function() {
+		ad.id = '';
+		ad.style.display = 'none';
 	};
 	return ad;
 }
@@ -301,6 +311,9 @@ newTensionDrum = function(elemId, initX, initY, initScale) {
 	convTension.alarm = function() {
 		convTension.drum.setAttribute('fill', 'red');
 	};
+	convTension.norm = function() {
+		convTension.drum.setAttribute('fill', 'gray');
+	};
 	return convTension;
 }
 
@@ -322,8 +335,17 @@ newMotorDrum = function(elemId, initX, initY, initScale) {
 	convMotor.driver.setAttribute('fill-opacity', '0.4');
 	convMotor.driver.setAttribute('stroke-width', '0.5');
 	convMotor.driver.style.stroke = 'black';
+	convMotor.notReady = function() {
+		convMotor.driver.setAttribute('fill', 'orange');
+	};
+	convMotor.ready = function() {
+		convMotor.driver.setAttribute('fill', 'blue');
+	};
 	convMotor.run = function() {
 		convMotor.driver.setAttribute('fill', 'green');
+	};
+	convMotor.alarm = function() {
+		convMotor.driver.setAttribute('fill', 'red');
 	};
 	return convMotor;
 }
@@ -331,24 +353,24 @@ newMotorDrum = function(elemId, initX, initY, initScale) {
 newConveyor = function(elemId, initX, initY, initLength, initAngle, initMiror, initScale) {
 	
 	conveyorJSON = {
-		'AGR': elemId,
+		elemId,
 		'PRM': [
 			'ATS_WORK',		//УПП в работе
-			'SW_STATUS',
+			'SW_STATUS',	// положение АВ
 			'ATS_RD',		//УПП готов
-			'ES_ATV',		// АС
-			'ES_NPU',
-			'ES_EXT',
-			'ES_CAB',
-			'ES_PULT',
+			'ES_ATV',		// АС АТВ
+			'ES_NPU',		// АС МПУ
+			'ES_EXT',		// АС дополнительный 
+			'ES_CAB',		// АС шкаф
+			'ES_PULT',		// АС пульт
 			'ALR_SPEED',	//ДКМС авария
 			'ALR_DKSL1',
 			'ALR_DKSL2',
 			'WRN_DKSL1',
 			'WRN_DKSL2',
-			'ES_BLOCK',
-			'GREEN_LP',
-			'RED_LP',
+			'ES_BLOCK',		// аварийная блокировка
+			'GREEN_LP',		// лампа на пульте
+			'RED_LP',		// лампа на пульте
 			'StW1',
 			'StW2'
 		]
@@ -361,11 +383,32 @@ newConveyor = function(elemId, initX, initY, initLength, initAngle, initMiror, i
 		req.onreadystatechange = function() {
 			if(this.readyState === 4 && this.status === 200) {
 				readyFlag = true;
-				parameters = JSON.parse(this.response);
-				conveyor = mainUnit.getElementById('1_2');
-				conveyor.motor.run();
-				conveyor.drum.alarm();
-//				conveyor.DKSL1.blink();
+				resp = JSON.parse(this.response);
+				keys = Object.keys(resp);
+				agrId = keys[0];
+				params = resp[agrId];
+//console.log(params);
+				conveyor = mainUnit.getElementById(String(agrId));
+				if (params.ATS_RD[0] === 1) {conveyor.motor.ready()} else {conveyor.motor.notReady()};
+				if (params.ATS_WORK[0] === 1) {conveyor.motor.run()}; 
+				if (params.SW_STATUS[0] === 0) {conveyor.motor.alarm()};
+				if (params.ALR_SPEED[0] === 1) {conveyor.drum.alarm()} else {conveyor.drum.norm()};
+				if (params.ES_NPU[0] === 1) {conveyor.ES_NPU.alarm()} else {conveyor.ES_NPU.hide()};
+//				if (params.ES_PULT[0] === 1) {conveyor.ES_PULT.alarm()} else {conveyor.ES_PULT.norm()};
+				if (params.ES_EXT[0] === 1) {conveyor.ES_EXT.alarm()} else {conveyor.ES_EXT.hide()};
+				if (params.ES_ATV[0] === 1) {conveyor.ES_ATV.alarm()} else {conveyor.ES_ATV.hide()};
+				if (params.WRN_DKSL1[0] === 1) 
+					{conveyor.DKSL1.warning()}
+				else
+					if (params.ALR_DKSL1[0] === 1)
+						{conveyor.DKSL1.alarm()}
+					else {conveyor.DKSL1.hide()};
+				if (params.WRN_DKSL2[0] === 1) 
+					{conveyor.DKSL2.warning()}
+				else
+					if (params.ALR_DKSL2[0] === 1)
+						{conveyor.DKSL1.alarm()}
+					else {conveyor.DKSL2.hide()};
 				}
 			else {
 				readyFlag = true;
@@ -394,9 +437,13 @@ newConveyor = function(elemId, initX, initY, initLength, initAngle, initMiror, i
 		style.stroke = 'black';
 		setAttribute('stroke-width', '0.5');
 		conveyor.motor = appendChild(newMotorDrum(elemId, initLength, 0, 1));
-		conveyor.DKSL1 = appendChild(newAd(elemId, initLength + 20, 0, 'ДКСЛ'));
-		conveyor.DKSL2 = appendChild(newAd(elemId, - 20, 0, 'ДКСЛ'));
 		conveyor.drum = appendChild(newTensionDrum(elemId, 0, 0, 1));
+		conveyor.DKSL1 = appendChild(newAd(initLength + 20, 0, 'ДКСЛ'));
+		conveyor.ES_NPU = appendChild(newAd(initLength + 20, 10, 'СТОП'));
+		conveyor.DKSL2 = appendChild(newAd(- 20, 0, 'ДКСЛ'));
+		conveyor.ES_EXT = appendChild(newAd(- 20, 10, 'СТОП'));
+		conveyor.ES_ATV = appendChild(newAd(initLength/2, 10, 'СТОП'));
+		conveyor.label = appendChild(newAd(initLength * 0.7, 10, 'Агрегат: ' + String(elemId)));
 		appendChild(convTape1);
 		appendChild(convTape2);
 	};

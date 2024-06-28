@@ -57,14 +57,27 @@ table.parameters {
 	border-collapse: collapse;
 	border: 0;
 }
+
 /* SVG */
-@keyframes fade {
-    0% { fill: red; }
-    100% { fill: red; }
+
+@keyframes alarm {
+    0% { fill: red; stroke: red;},
+    100% { fill: red; stroke: red;}
 }
 
 #alarm_blink {
 	font: 6px arial;
 	stroke-width: 0.1;
-	animation: fade 800ms infinite;
+	animation: alarm 800ms infinite;
+}
+
+@keyframes warn {
+    0% { fill: red; stroke: red;},
+    100% { fill: red; stroke: red;}
+}
+
+#warn_blink {
+	font: 6px arial;
+	stroke-width: 0.1;
+	animation: warn 800ms infinite;
 }
