@@ -7,7 +7,6 @@
 		<link rel="stylesheet" href="./static/css/styles.css">
 		<script src="./static/js/scripts.js"></script>
 		<script src="./static/js/svgelements.js"></script>
-<!--		<script>parametersChart("1_6"); displayParameters();</script>-->
 	</head>
 	<body class="text_summary" onresize="svgScale();" onload="svgScale();">
 		<div>
@@ -18,15 +17,18 @@
 		<div>
 			<svg id="mainUnit" xmlns="http://www.w3.org/2000/svg"  width="1832" height="1008" viewBox="-1 -1 1834 1010" version="1.1">
 				<script>
-//					mainUnit.appendChild(newMill('1_6', 320, 200, 4));
-//					mainUnit.appendChild(newDriverReducer('1_61', 275, 420, 4));
-//					mainUnit.appendChild(newDriver6kV('1_61', 5, 300, 4));
+					mill = mainUnit.appendChild(newMill('1_6', 320, 200, 4));
+					mill.secondDriver.run();
+					mill.driver6Kv.notReady();
+					mill.rotationLeft.run();
+					mill.rotationRigth.hide();
+					mill.accidentState.alarm();
 //					mainUnit.appendChild(newOiler('1_601', 480, 230, 4, mirror = true));
 //					mainUnit.appendChild(newOiler('1_602', 1400, 230, 4, mirror = false));
 //					mainUnit.appendChild(newOilStation('1_601', 600, 410, 4));
 //					mainUnit.appendChild(newOilStation('1_602', 1200, 410, 4));
-					unit_1_2 = mainUnit.appendChild(newConveyor('1_2', 400, 100, 200, 15, false, 4));
-					unit_1_2.motor.run();
+//					unit_1_2 = mainUnit.appendChild(newConveyor('1_2', 400, 100, 200, 15, false, 4));
+//					unit_1_2.motor.run();
 				</script>
 			</svg>
 		</div>

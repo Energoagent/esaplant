@@ -81,3 +81,13 @@ table.parameters {
 	stroke-width: 0.1;
 	animation: warn 800ms infinite;
 }
+
+@keyframes run {
+    0% { fill: none; stroke: green; },
+    100% { fill: none; stroke: green; }
+}
+
+#run_blink {
+	stroke-width: 0.1;
+	animation: run 800ms infinite;
+}

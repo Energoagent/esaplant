@@ -23,6 +23,9 @@ newAd = function(initX, initY, labelText) {
 		ad.id = '';
 		ad.style.display = 'none';
 	};
+	ad.setLabel = function(newLabelText) {
+		ad.innerHTML = newlabelText;
+	};
 	return ad;
 }
 
@@ -103,29 +106,25 @@ MILL_ROTATION_RIGHT =
 <line x1="4" y1="30" x2="8" y2="40"/>
 <line x1="0" y1="40" x2="8" y2="40"/>`
 
-millRotationRight = function(elemId, initX, initY, initScale) {
-	let elm = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	elm.id = elemId + '_right';
-	elm.innerHTML = MILL_ROTATION_RIGHT;
-	elm.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
-	elm.setAttribute('fill', 'none');
-	elm.setAttribute('stroke-width', '0.5');
-	elm.style.stroke = 'green';
-	return elm;
-}
-
 MILL_ROTATION_LEFT =
 `<path d="M64,30 L64,2 A2,2 0 0,0 62,0 L56,0 A2,2 0 0,0 54,2 L54,16 "/>
 <path d="M64,40 L60,30 L68,30 L64,40 "/>`
 
-millRotationLeft = function(elemId, initX, initY, initScale) {
+millRotation = function(initHTML, initX, initY, initScale) {
 	let elm = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	elm.id = elemId + '_left';
-	elm.innerHTML = MILL_ROTATION_LEFT;
+	elm.innerHTML = initHTML;
+	elm.setAttribute('class', 'parameters');
 	elm.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
 	elm.setAttribute('fill', 'none');
 	elm.setAttribute('stroke-width', '0.5');
-	elm.style.stroke = 'blue';
+	elm.style.stroke = 'green';
+	elm.hide = function() {
+		elm.style.display = 'none';
+	};
+	elm.run = function() {
+		elm.style.display = '';
+		elm.id = 'run_blink';
+	};
 	return elm;
 }
 
@@ -141,26 +140,63 @@ newMillParameters = function(elemId, initX, initY) {
 				
 newMill = function(elemId, initX, initY, initScale) {
 	const PBP = {x: 1, y: -30};
+	const millJSON = {
+		elemId,
+		'PRM': [
+			'ROT_LEFT', 'ROT_RIGTH', 
+			'TMP_ACD', 'RUN', 'ENG_PROT', 'ACD_ST',
+			'P1_1_TMP', 'P1_2_TMP', 'P1_3_TMP',
+			'P2_1_TMP', 'P2_2_TMP', 'P2_3_TMP'
+		]
+	};
+	
+	requestProcessor = function() {
+		let req = new XMLHttpRequest();
+		if (!readyFlag) {return;}
+		req.open('POST', 'http://' + SERVER_LOCATION + '/params');
+		req.onreadystatechange = function() {
+			if(this.readyState === 4 && this.status === 200) {
+				readyFlag = true;
+				resp = JSON.parse(this.response);
+				keys = Object.keys(resp);
+				agrId = keys[0];
+				params = resp[agrId];
+//console.log(params);
+				mill = mainUnit.getElementById(String(agrId));
+			}
+			else {
+				readyFlag = true;
+			};
+		};
+		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+		req.send(JSON.stringify(conveyorJSON));
+		readyFlag = false;
+	};
 	let mill = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 	mill.id = elemId + '_mill';
 	mill.innerHTML = MILL_SHAPE;
-	mill.appendChild(millRotationLeft('1_6_rotation', 100, 1, 1));
-	mill.appendChild(millRotationRight('1_6_rotation', 100, 1, 1));
-	mill.appendChild(newParameterBlock('1_6_TMP_ACD', PBP.x, PBP.y, 'Температура подшипника авария', 100));
-	mill.appendChild(newParameterBlock('1_6_RUN', PBP.x, PBP.y + 6, 'Работа двигателя', 100));
-	mill.appendChild(newParameterBlock('1_6_DEF', PBP.x, PBP.y + 12, 'Срабатывание защиты', 100));
-	mill.appendChild(newParameterBlock('1_6_ACD', PBP.x, PBP.y + 18, 'Аварийное состояние', 100));
-	mill.appendChild(newParameterBlock('1_6_P1_1_TMP', PBP.x, PBP.y + 24, 'Температура подшипника 1-1', 85));
-	mill.appendChild(newParameterBlock('1_6_P1_2_TMP', PBP.x + 95, PBP.y + 24, '1-2', 10));
-	mill.appendChild(newParameterBlock('1_6_P1_3_TMP', PBP.x + 115, PBP.y + 24, '1-3', 10));
-	mill.appendChild(newParameterBlock('1_6_P2_1_TMP', PBP.x + 200, PBP.y + 24, 'Температура подшипника 2-1', 85));
-	mill.appendChild(newParameterBlock('1_6_P2_2_TMP', PBP.x + 296, PBP.y + 24, '2-2', 10));
-	mill.appendChild(newParameterBlock('1_6_P2_3_TMP', PBP.x + 315, PBP.y + 24, '2-3', 10));
-//	mill.appendChild(newMillParameters('1_6', 1, 100));
+	mill.secondDriver = mill.appendChild(newDriverReducer(PBP.x - 15, PBP.y + 85, 1));
+	mill.driver6Kv = mill.appendChild(newDriver6kV(PBP.x - 80, PBP.y + 55, 1));
+	mill.rotationLeft = mill.appendChild(millRotation(MILL_ROTATION_LEFT, 100, 1, 1));
+	mill.rotationRigth = mill.appendChild(millRotation(MILL_ROTATION_RIGHT, 100, 1, 1));
+	mill.temperatureAccident = mill.appendChild(newAd(PBP.x, PBP.y, 'Температура подшипника авария'));
+//	mill.driverRun = mill.appendChild(newAd(PBP.x, PBP.y + 6, 'Работа двигателя'));
+	mill.driverProtection = mill.appendChild(newAd(PBP.x, PBP.y + 12, 'Срабатывание защиты'));
+	mill.accidentState = mill.appendChild(newAd(PBP.x, PBP.y + 18, 'Аварийное состояние'));
+	mill.P1_1_temperature = mill.appendChild(newAd(PBP.x + 50, PBP.y + 24, '0 C°'));
+	mill.P1_2_temperature = mill.appendChild(newAd(PBP.x + 70, PBP.y + 24, '0 C°'));
+	mill.P1_3_temperature = mill.appendChild(newAd(PBP.x + 90, PBP.y + 24, '0 C°'));
+	mill.P2_1_temperature = mill.appendChild(newAd(PBP.x + 270, PBP.y + 24, '0 C°'));
+	mill.P2_2_temperature = mill.appendChild(newAd(PBP.x + 290, PBP.y + 24, '0 C°'));
+	mill.P2_3_temperature = mill.appendChild(newAd(PBP.x + 310, PBP.y + 24, '0 C°'));
+	mill.label = mill.appendChild(newAd(200, 45, 'Агрегат: ' + String(elemId)));
 	mill.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
 	mill.setAttribute('fill', 'none');
 	mill.setAttribute('stroke-width', '0.5');
 	mill.style.stroke = 'black';
+
+//	setInterval(requestProcessor, 5000);
+
 	return mill;
 }
 				
@@ -182,14 +218,25 @@ const DRIVER_REDUCER =
 <path d="M38,0 L43,0 L43,21 L38,21 L38,0 Z "/>`
 
 
-newDriverReducer = function(elemId, initX, initY, initScale) {
+newDriverReducer = function(initX, initY, initScale) {
 	let elm = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	elm.id = elemId + '_driver';
 	elm.innerHTML = DRIVER_REDUCER;
 	elm.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
 	elm.setAttribute('fill', 'none');
 	elm.setAttribute('stroke-width', '0.5');
 	elm.style.stroke = 'black';
+	elm.notReady = function() {
+		elm.setAttribute('fill', 'orange');
+	};
+	elm.ready = function() {
+		elm.setAttribute('fill', 'blue');
+	};
+	elm.run = function() {
+		elm.setAttribute('fill', 'green');
+	};
+	elm.alarm = function() {
+		elm.setAttribute('fill', 'red');
+	};
 	return elm;
 }
 
@@ -207,14 +254,25 @@ const DRIVER_6_KV =
 <path d="M73,7 L78,7 L78,23 L73,23 L73,7 Z "/>
 <path d="M68,13 L73,13 L73,17 L68,17 L68,13 Z "/>`
 
-newDriver6kV = function(elemId, initX, initY, initScale) {
+newDriver6kV = function(initX, initY, initScale) {
 	let elm = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	elm.id = elemId + '_DRiver6kV';
 	elm.innerHTML = DRIVER_6_KV;
 	elm.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
 	elm.setAttribute('fill', 'none');
 	elm.setAttribute('stroke-width', '0.5');
 	elm.style.stroke = 'black';
+	elm.notReady = function() {
+		elm.setAttribute('fill', 'orange');
+	};
+	elm.ready = function() {
+		elm.setAttribute('fill', 'blue');
+	};
+	elm.run = function() {
+		elm.setAttribute('fill', 'green');
+	};
+	elm.alarm = function() {
+		elm.setAttribute('fill', 'red');
+	};
 	return elm;
 }
 
@@ -360,7 +418,7 @@ newConveyor = function(elemId, initX, initY, initLength, initAngle, initMiror, i
 			'ATS_RD',		//УПП готов
 			'ES_ATV',		// АС АТВ
 			'ES_NPU',		// АС МПУ
-			'ES_EXT',		// АС дополнительный 
+			'ES_EXT',		// АС доп стоп-кнопка 
 			'ES_CAB',		// АС шкаф
 			'ES_PULT',		// АС пульт
 			'ALR_SPEED',	//ДКМС авария
@@ -448,7 +506,7 @@ newConveyor = function(elemId, initX, initY, initLength, initAngle, initMiror, i
 		appendChild(convTape2);
 	};
 	
-	setInterval(requestProcessor, 5000);
+//	setInterval(requestProcessor, 5000);
 	
 	return conveyor;
 }
