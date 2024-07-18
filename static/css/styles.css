@@ -36,29 +36,15 @@ div.row_block {
 	font-weight: 500;
 	color: lightslategray;
 }
+
+/* SVG */
+
 text.parameters {
 	stroke: black;
-	font: 6px arial;
+	font: 8px arial;
 	stroke-width: 0.1;
 	fill: black;
 }
-
-table.parameters {
-	font: 6px arial;
-	font-weight: 100;
-	padding-top: 0;
-	padding-bottom: 0;
-	margin-top: 0;
-    margin-bottom: 0;
-    margin-block-start: 0;
-    margin-block-end: 0;
-	word-break: break-all;
-	border-spacing: 0;
-	border-collapse: collapse;
-	border: 0;
-}
-
-/* SVG */
 
 @keyframes alarm {
     0% { fill: red; stroke: red;},
@@ -66,13 +52,13 @@ table.parameters {
 }
 
 #alarm_blink {
-	font: 6px arial;
+	font: 8px arial;
 	stroke-width: 0.1;
 	animation: alarm 800ms infinite;
 }
 
 @keyframes warn {
-    0% { fill: red; stroke: red;},
+    0% { fill: orange; stroke: orange;},
     100% { fill: red; stroke: red;}
 }
 
@@ -80,14 +66,4 @@ table.parameters {
 	font: 6px arial;
 	stroke-width: 0.1;
 	animation: warn 800ms infinite;
-}
-
-@keyframes run {
-    0% { fill: none; stroke: green; },
-    100% { fill: none; stroke: green; }
-}
-
-#run_blink {
-	stroke-width: 0.1;
-	animation: run 800ms infinite;
 }
