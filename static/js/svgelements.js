@@ -3,9 +3,10 @@
 
 //SERVER_LOCATION = 'vpn.energoagent.com:8787';
 //SERVER_LOCATION = '192.168.22.11:8787';
-SERVER_LOCATION = 'localhost:8787';
+const SERVER_LOCATION = 'localhost:8787';
 
-STROKE_WIDTH = '1.0';
+const STROKE_WIDTH = '1.0';
+
 
 newAd = function(initX, initY, labelText) {	
 	let ad = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -15,23 +16,26 @@ newAd = function(initX, initY, labelText) {
 	ad.innerHTML = labelText;
 	ad.setAttribute('class', 'parameters');
 	ad.alarm = function() {
-		ad.id = 'alarm_blink';
+		ad.style.stroke = 'red';
+		ad.style.fill = 'red';
 		ad.style.display = '';
 	};
 	ad.warning = function() {
-		ad.id = 'warn_blink';
+		ad.style.stroke = 'orange';
+		ad.style.fill = 'orange';
 		ad.style.display = '';
 	};
 	ad.norm = function() {
-		ad.id = '';
+		ad.style.stroke = 'black';
+		ad.style.fill = 'black';
 		ad.style.display = '';
 	};
 	ad.hide = function() {
 		ad.id = '';
 		ad.style.display = 'none';
 	};
-	ad.setLabel = function(newLabelText) {
-		ad.innerHTML = newlabelText;
+	ad.setText = function(newLabelText) {
+		ad.innerHTML = newLabelText;
 		ad.style.display = '';
 	};
 	return ad;
@@ -75,7 +79,7 @@ MILL_ROTATION_LEFT =
 millRotation = function(initHTML, initX, initY) {
 	let elm = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 	elm.innerHTML = initHTML;
-	elm.setAttribute('class', 'parameters');
+//	elm.setAttribute('class', 'parameters');
 	elm.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
 	elm.setAttribute('fill', 'none');
 	elm.setAttribute('stroke-width', STROKE_WIDTH);
@@ -102,31 +106,36 @@ newMill = function(elemId, initX, initY, initScale) {
 			'P2_1_TMP', 'P2_2_TMP', 'P2_3_TMP'	// температура подшипника со стороны загрузки
 		]
 	};
-	
+
 	requestProcessor = function() {
 		let req = new XMLHttpRequest();
-		if (!readyFlag) {return;}
 		req.open('POST', 'http://' + SERVER_LOCATION);
 		req.onreadystatechange = function() {
 			if(this.readyState === 4 && this.status === 200) {
-				readyFlag = true;
 				resp = JSON.parse(this.response);
 				keys = Object.keys(resp);
-				agrId = keys[0];
+				agrId = keys[1];
 				params = resp[agrId];
-console.log(params);
-				mill = mainUnit.getElementById(String(agrId));
-			}
-			else {
-				readyFlag = true;
+				mill = mainUnit.getElementById(agrId);
+				if (mill) {
+					if (params.MILL_WORK[0] === 1) {mill.driver6Kv.run()} else {mill.driver6Kv.notReady()};
+					mill.P1_1_temperature.setText(params.Temp1_Bear1[0][0]);
+					mill.P1_2_temperature.setText(params.Temp2_Bear1[0][0]);
+					mill.P1_3_temperature.setText(params.Temp3_Bear1[0][0]);
+					mill.P2_1_temperature.setText(params.Temp1_Bear2[0][0]);
+					mill.P2_2_temperature.setText(params.Temp3_Bear2[0][0]);
+					mill.P2_3_temperature.setText(params.Temp3_Bear2[0][0]);
+					if (params.BLK_1_601[0] === 1) {mill.os_1_601.block()} else {mill.os_1_601.norm()};
+					if (params.BLK_1_602[0] === 1) {mill.os_1_602.block()} else {mill.os_1_602.norm()};
+				};
 			};
 		};
 		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
 		req.send(JSON.stringify(millJSON));
-		readyFlag = false;
 	};
+	
 	let mill = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	mill.id = elemId + '_mill';
+	mill.id = elemId;
 	mill.innerHTML = MILL_SHAPE;
 	mill.secondDriver = mill.appendChild(newDriverReducer(PBP.x - 15, PBP.y + 85));
 	mill.driver6Kv = mill.appendChild(newDriver6kV(PBP.x - 80, PBP.y + 55));
@@ -142,6 +151,11 @@ console.log(params);
 	mill.P2_1_temperature = mill.appendChild(newAd(PBP.x + 240, PBP.y + 50, '0 C°'));
 	mill.P2_2_temperature = mill.appendChild(newAd(PBP.x + 240, PBP.y + 60, '0 C°'));
 	mill.P2_3_temperature = mill.appendChild(newAd(PBP.x + 240, PBP.y + 70, '0 C°'));
+	mill.os_1_601 = mill.appendChild(newOilStation('', 65, 52, 1));
+	mill.os_1_602 = mill.appendChild(newOilStation('', 220, 52, 1));
+
+
+
 	mill.label = mill.appendChild(newAd(PBP.x + 120, PBP.y + 50, 'Агрегат: ' + elemId));
 	mill.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
 	mill.setAttribute('fill', 'none');
@@ -265,6 +279,12 @@ newOilStation = function(elemId, initX, initY, initScale) {
 	os.setAttribute('fill', 'none');
 	os.setAttribute('stroke-width', STROKE_WIDTH);
 	os.style.stroke = 'black';
+	os.block = function(){
+		os.style.stroke = 'red';
+	};
+	os.norm = function(){
+		os.style.stroke = 'green';
+	};
 	return os;
 }
 
@@ -286,9 +306,8 @@ const CONVEYOR_MOTOR_DRUM_SHAPE =
 <circle cx="9" cy="9" r="9"/>
 <circle cx="9" cy="9" r="2"/>`
 
-newTensionDrum = function(elemId, initX, initY, initMirror) {	
+newTensionDrum = function(initX, initY, initMirror) {	
 	let convTension = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	convTension.id = elemId + '_tn';
 	convTension.innerHTML = CONVEYOR_TENSION_DRUM_SHAPE;
 	convTension.setAttribute('fill', 'none');
 	convTension.setAttribute('stroke-width', STROKE_WIDTH);
@@ -308,9 +327,8 @@ newTensionDrum = function(elemId, initX, initY, initMirror) {
 	return convTension;
 }
 
-newMotorDrum = function(elemId, initX, initY) {	
+newMotorDrum = function(initX, initY) {	
 	let convMotor = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	convMotor.id = elemId + '_m';
 	convMotor.innerHTML = CONVEYOR_MOTOR_DRUM_SHAPE;
 	convMotor.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
 	convMotor.fill = 'none';
@@ -358,45 +376,40 @@ newConveyor = function(elemId, initX, initY, initLength, initAngle, initMirror, 
 	
 	requestProcessor = function() {
 		let req = new XMLHttpRequest();
-		if (!readyFlag) {return;}
 		req.open('POST', 'http://' + SERVER_LOCATION);
 		req.onreadystatechange = function() {
 			if(this.readyState === 4 && this.status === 200) {
-				readyFlag = true;
 				resp = JSON.parse(this.response);
 				keys = Object.keys(resp);
 				agrId = keys[0];
 				params = resp[agrId];
-//console.log(params);
-				conveyor = mainUnit.getElementById(String(agrId));
-				if (params.ATS_RD[0] === 1) {conveyor.motor.ready()} else {conveyor.motor.notReady()};
-				if (params.ATS_WORK[0] === 1) {conveyor.motor.run()}; 
-				if (params.SW_STATUS[0] === 0) {conveyor.motor.alarm()};
-				if (params.ALR_SPEED[0] === 1) {conveyor.drum.alarm()} else {conveyor.drum.norm()};
-				if (params.ES_NPU[0] === 1) {conveyor.ES_NPU.alarm()} else {conveyor.ES_NPU.hide()};
-//				if (params.ES_PULT[0] === 1) {conveyor.ES_PULT.alarm()} else {conveyor.ES_PULT.norm()};
-				if (params.ES_EXT[0] === 1) {conveyor.ES_EXT.alarm()} else {conveyor.ES_EXT.hide()};
-				if (params.ES_ATV[0] === 1) {conveyor.ES_ATV.alarm()} else {conveyor.ES_ATV.hide()};
-				if (params.WRN_DKSL1[0] === 1) 
-					{conveyor.DKSL1.warning()}
-				else
-					if (params.ALR_DKSL1[0] === 1)
-						{conveyor.DKSL1.alarm()}
-					else {conveyor.DKSL1.hide()};
-				if (params.WRN_DKSL2[0] === 1) 
-					{conveyor.DKSL2.warning()}
-				else
-					if (params.ALR_DKSL2[0] === 1)
-						{conveyor.DKSL1.alarm()}
-					else {conveyor.DKSL2.hide()};
-				}
-			else {
-				readyFlag = true;
+				conveyor = mainUnit.getElementById(agrId);
+				if (conveyor) {
+					if (params.ATS_RD[0] === 1) {conveyor.motor.ready()} else {conveyor.motor.notReady()};
+					if (params.ATS_WORK[0] === 1) {conveyor.motor.run()}; 
+					if (params.SW_STATUS[0] === 0) {conveyor.motor.alarm()};
+					if (params.ALR_SPEED[0] === 1) {conveyor.drum.alarm()} else {conveyor.drum.norm()};
+					if (params.ES_NPU[0] === 1) {conveyor.ES_NPU.alarm()} else {conveyor.ES_NPU.hide()};
+					if (params.ES_ATV[0] === 1) {conveyor.ES_ATV.alarm()} else {conveyor.ES_ATV.hide()};
+					if (params.ES_EXT[0] === 1) {conveyor.ES_EXT.alarm()} else {conveyor.ES_EXT.hide()};
+					if (params.ES_ATV[0] === 1) {conveyor.ES_ATV.alarm()} else {conveyor.ES_ATV.hide()};
+					if (params.WRN_DKSL1[0] === 1) 
+						{conveyor.DKSL1.warning()}
+					else
+						if (params.ALR_DKSL1[0] === 1)
+							{conveyor.DKSL1.alarm()}
+						else {conveyor.DKSL1.hide()};
+					if (params.WRN_DKSL2[0] === 1) 
+						{conveyor.DKSL2.warning()}
+					else
+						if (params.ALR_DKSL2[0] === 1)
+							{conveyor.DKSL1.alarm()}
+						else {conveyor.DKSL2.hide()};
+				};
 			};
 		};
 		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
 		req.send(JSON.stringify(conveyorJSON));
-		readyFlag = false;
 	};
 
 	let convTape1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -414,20 +427,20 @@ newConveyor = function(elemId, initX, initY, initLength, initAngle, initMirror, 
 	conveyor.id = elemId;
 	
 	if (initMirror) {
-		conveyor.drum = conveyor.appendChild(newTensionDrum(elemId, initLength, 0, true));
-		conveyor.motor = conveyor.appendChild(newMotorDrum(elemId, 0, 0));
+		conveyor.drum = conveyor.appendChild(newTensionDrum(initLength, 0, true));
+		conveyor.motor = conveyor.appendChild(newMotorDrum(0, 0));
 		conveyor.DKSL2 = conveyor.appendChild(newAd(initLength - 24, 7, 'ДКСЛ'));
-		conveyor.ES_EXT = conveyor.appendChild(newAd(initLength - 24, 16, 'СТОП'));
+		conveyor.ES_EXT = conveyor.appendChild(newAd(initLength - 24, 16, 'АС'));
 		conveyor.DKSL1 = conveyor.appendChild(newAd(22, 7, 'ДКСЛ'));
-		conveyor.ES_NPU = conveyor.appendChild(newAd(22, 16, 'СТОП'));
+		conveyor.ES_NPU = conveyor.appendChild(newAd(22, 16, 'АС'));
 	}
 	else {
-		conveyor.motor = conveyor.appendChild(newMotorDrum(elemId, initLength, 0));
-		conveyor.drum = conveyor.appendChild(newTensionDrum(elemId, 0, 0, false));
+		conveyor.motor = conveyor.appendChild(newMotorDrum(initLength, 0));
+		conveyor.drum = conveyor.appendChild(newTensionDrum(0, 0, false));
 		conveyor.DKSL1 = conveyor.appendChild(newAd(initLength - 24, 7, 'ДКСЛ'));
-		conveyor.ES_NPU = conveyor.appendChild(newAd(initLength - 24, 16, 'СТОП'));
+		conveyor.ES_NPU = conveyor.appendChild(newAd(initLength - 24, 16, 'АС'));
 		conveyor.DKSL2 = conveyor.appendChild(newAd(22, 7, 'ДКСЛ'));
-		conveyor.ES_EXT = conveyor.appendChild(newAd(22, 16, 'СТОП'));
+		conveyor.ES_EXT = conveyor.appendChild(newAd(22, 16, 'АС'));
 	};
 	conveyor.ES_ATV = conveyor.appendChild(newAd(initLength/2, 10, 'АТВ'));
 	conveyor.label = conveyor.appendChild(newAd(initLength * 0.65, 10, elemId));
@@ -451,11 +464,11 @@ newConveyor = function(elemId, initX, initY, initLength, initAngle, initMirror, 
 	conveyor.alarm = function() {
 		conveyor.setAttribute('fill', 'red');
 	};
-	conveyor.DKSL1.hide();
-	conveyor.DKSL2.hide();
-	conveyor.ES_NPU.hide();
-	conveyor.ES_EXT.hide();
-	conveyor.ES_ATV.hide();
+//	conveyor.DKSL1.hide();
+//	conveyor.DKSL2.hide();
+//	conveyor.ES_NPU.hide();
+//	conveyor.ES_EXT.hide();
+//	conveyor.ES_ATV.hide();
 	
 	setInterval(requestProcessor, 5000);
 	
@@ -475,8 +488,9 @@ const ELEVATOR_SHAPE =
 <rect x="23" y="116" width="4" height="5"/>
 <rect x="23" y="110" width="4" height="1"/>`;
 
-
 newElevator = function(elemId, initX, initY, initHeight, initMirror, initScale) {
+
+
 	let elevator = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 	elevator.id = elemId;
 	let elevatorHead = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -501,20 +515,41 @@ newElevator = function(elemId, initX, initY, initHeight, initMirror, initScale) 
 	elevatorTube.setAttribute('y', 30 - initHeight);
 	elevatorTube.setAttribute('width', 20);
 	elevatorTube.setAttribute('height', 80 + initHeight);
-	let elevatorFoot= document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	elevatorFoot.innerHTML = ELEVATOR_SHAPE;
+	elevator.foot = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+	elevator.foot.innerHTML = ELEVATOR_SHAPE;
 	if (initMirror) {
-		elevatorFoot.setAttribute('transform', `translate(50, 0), scale(-1, 1)`);
+		elevator.foot.setAttribute('transform', `translate(50, 0), scale(-1, 1)`);
 	}
 	else {
-		elevatorFoot.setAttribute('transform', `translate(0, 0), scale(1)`);
+		elevator.foot.setAttribute('transform', `translate(0, 0), scale(1)`);
 	};
-	elevator.appendChild(elevatorHead);
-	elevator.appendChild(elevatorTube);
-	elevator.appendChild(elevatorFoot);
+	elevator.head = elevator.appendChild(elevatorHead);
+	elevator.tube = elevator.appendChild(elevatorTube);
+	elevator.appendChild(elevator.foot);
+	elevator.label = elevator.appendChild(newAd(16, 50, elemId));
+	elevator.ES_NPU = elevator.appendChild(newAd(18, 28 - initHeight, 'АС'));
+	elevator.ES_EXT = elevator.appendChild(newAd(18, 107, 'АС'));
+	elevator.ready = function() {
+		elevator.motor.setAttribute('fill', 'blue');
+	};
+	elevator.notReady = function() {
+		elevator.motor.setAttribute('fill', 'orange');
+	};
 	elevator.run = function() {
 		elevator.motor.setAttribute('fill', 'green');
 	};
+	elevator.alarm = function() {
+		elevator.motor.setAttribute('fill', 'red');
+	};
+	elevator.clogged = function() {
+		elevator.foot.setAttribute('fill', 'red');
+	};
+	elevator.chainBreak = function() {
+		elevator.tube.setAttribute('fill', 'red');
+	};
 	return elevator;
+	
+//	setInterval(requestProcessor, 5000);
+
 };
 //-----
