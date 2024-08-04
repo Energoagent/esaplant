@@ -8,6 +8,7 @@ const SERVER_LOCATION = 'localhost:8787';
 const STROKE_WIDTH = '1.0';
 
 
+// метка
 newAd = function(initX, initY, labelText) {	
 	let ad = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 	ad.id = '';
@@ -93,7 +94,7 @@ millRotation = function(initHTML, initX, initY) {
 	return elm;
 }
 
-newMill = function(elemId, initX, initY, initScale) {
+newMill = function(elemId, initX, initY) {
 	const PBP = {x: 1, y: -30};
 	const millJSON = {
 		elemId: [
@@ -109,7 +110,7 @@ newMill = function(elemId, initX, initY, initScale) {
 
 	requestProcessor = function() {
 		let req = new XMLHttpRequest();
-		req.open('POST', 'http://' + SERVER_LOCATION);
+		req.open('GET', 'http://' + SERVER_LOCATION + '/data?AGR=' + elemId);
 		req.onreadystatechange = function() {
 			if(this.readyState === 4 && this.status === 200) {
 				resp = JSON.parse(this.response);
@@ -130,8 +131,9 @@ newMill = function(elemId, initX, initY, initScale) {
 				};
 			};
 		};
-		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-		req.send(JSON.stringify(millJSON));
+//		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+//		req.send(JSON.stringify(millJSON));
+		req.send();
 	};
 	
 	let mill = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -140,7 +142,9 @@ newMill = function(elemId, initX, initY, initScale) {
 	mill.secondDriver = mill.appendChild(newDriverReducer(PBP.x - 15, PBP.y + 85));
 	mill.driver6Kv = mill.appendChild(newDriver6kV(PBP.x - 80, PBP.y + 55));
 	mill.rotationLeft = mill.appendChild(millRotation(MILL_ROTATION_LEFT, PBP.x + 160, PBP.y + 30));
+	mill.rotationLeft.hide();
 	mill.rotationRigth = mill.appendChild(millRotation(MILL_ROTATION_RIGHT, PBP.x + 100, PBP.y + 30));
+	mill.rotationRigth.hide();
 //	mill.temperatureAccident = mill.appendChild(newAd(PBP.x, PBP.y, 'Температура подшипника авария'));
 //	mill.driverRun = mill.appendChild(newAd(PBP.x, PBP.y + 6, 'Работа двигателя'));
 	mill.driverProtection = mill.appendChild(newAd(PBP.x + 120, PBP.y + 60, 'Срабатывание защиты'));
@@ -157,7 +161,7 @@ newMill = function(elemId, initX, initY, initScale) {
 
 
 	mill.label = mill.appendChild(newAd(PBP.x + 120, PBP.y + 50, 'Агрегат: ' + elemId));
-	mill.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
+	mill.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
 	mill.setAttribute('fill', 'none');
 	mill.setAttribute('stroke-width', STROKE_WIDTH);
 	mill.style.stroke = 'black';
@@ -275,7 +279,7 @@ newOilStation = function(elemId, initX, initY, initScale) {
 	os.id = elemId;
 	os.innerHTML = OIL_STATION;
 	os.label = os.appendChild(newAd(12, 25, elemId));
-	os.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
+	os.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
 	os.setAttribute('fill', 'none');
 	os.setAttribute('stroke-width', STROKE_WIDTH);
 	os.style.stroke = 'black';
@@ -306,18 +310,13 @@ const CONVEYOR_MOTOR_DRUM_SHAPE =
 <circle cx="9" cy="9" r="9"/>
 <circle cx="9" cy="9" r="2"/>`
 
-newTensionDrum = function(initX, initY, initMirror) {	
+newTensionDrum = function(initX, initY, initAngle) {	
 	let convTension = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 	convTension.innerHTML = CONVEYOR_TENSION_DRUM_SHAPE;
 	convTension.setAttribute('fill', 'none');
 	convTension.setAttribute('stroke-width', STROKE_WIDTH);
 	convTension.setAttribute('stroke', 'black');
-	if (initMirror) {
-		convTension.setAttribute('transform', `translate(${initX + 18}, ${initY + 18}), scale(-1)`);
-	}
-	else {
-		convTension.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
-	};
+	convTension.setAttribute('transform', `translate(${initX}, ${initY}) rotate(${initAngle}, 9, 9)`);
 	convTension.alarm = function() {
 		convTension.setAttribute('fill', 'red');
 	};
@@ -330,7 +329,7 @@ newTensionDrum = function(initX, initY, initMirror) {
 newMotorDrum = function(initX, initY) {	
 	let convMotor = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 	convMotor.innerHTML = CONVEYOR_MOTOR_DRUM_SHAPE;
-	convMotor.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
+	convMotor.setAttribute('transform', `translate(${initX}, ${initY})`);
 	convMotor.fill = 'none';
 	convMotor.style.stroke = 'black';
 	convMotor.setAttribute('stroke-width', STROKE_WIDTH);
@@ -349,7 +348,7 @@ newMotorDrum = function(initX, initY) {
 	return convMotor;
 };
 
-newConveyor = function(elemId, initX, initY, initLength, initAngle, initMirror, initScale) {
+newConveyor = function(elemId, initMotorX, initMotorY, initDrumX, initDrumY) {
 	
 	conveyorJSON = {
 		elemId: [
@@ -369,14 +368,12 @@ newConveyor = function(elemId, initX, initY, initLength, initAngle, initMirror, 
 			'ES_BLOCK',		// аварийная блокировка
 			'GREEN_LP',		// лампа на пульте
 			'RED_LP',		// лампа на пульте
-			'StW1',
-			'StW2'
 		]
 	};
 	
 	requestProcessor = function() {
 		let req = new XMLHttpRequest();
-		req.open('POST', 'http://' + SERVER_LOCATION);
+		req.open('GET', 'http://' + SERVER_LOCATION + '/data?AGR=' + elemId);
 		req.onreadystatechange = function() {
 			if(this.readyState === 4 && this.status === 200) {
 				resp = JSON.parse(this.response);
@@ -408,46 +405,53 @@ newConveyor = function(elemId, initX, initY, initLength, initAngle, initMirror, 
 				};
 			};
 		};
-		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-		req.send(JSON.stringify(conveyorJSON));
+//		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+//		req.send(JSON.stringify(conveyorJSON));
+		req.send();
 	};
 
+	let motorCP = {'x': initMotorX + 9, 'y': initMotorY + 9, 'dx': initDrumX - initMotorX, 'dy': initDrumY - initMotorY};
+	let drumCP = {'x': initDrumX + 9, 'y': initDrumY + 9};
+	let initAngle = 0;
+//	if (motorCP.dx !== 0) {initAngle = Math.atan(motorCP.dy / motorCP.dx)* 180 / Math.PI};
+//	let dl = (initAngle > 0) ? (motorCP.dy/Math.tan((180 - initAngle)/2)): 0;
+	if (motorCP.dx !== 0) {initAngle = Math.atan(motorCP.dy / motorCP.dx)};
+	let dl = 0;
+	if (initAngle > 0) {dl = motorCP.dy / Math.tan((Math.PI - initAngle) / 2)};
+	initAngle = initAngle * 180 / Math.PI;
+//console.log(elemId, motorCP, drumCP, initAngle, dl);
+
 	let convTape1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-	convTape1.setAttribute('x1', 9);
-	convTape1.setAttribute('x2', 9 + initLength);
-	convTape1.setAttribute('y1', 0);
-	convTape1.setAttribute('y2', 0);
+	convTape1.setAttribute('x1', motorCP.x);
+	convTape1.setAttribute('x2', drumCP.x + dl);
+	convTape1.setAttribute('y1', motorCP.y - 9);
+	convTape1.setAttribute('y2', motorCP.y - 9);
+	convTape1.setAttribute('transform', `rotate(${initAngle}, ${motorCP.x}, ${motorCP.y})`);
+
 	let convTape2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-	convTape2.setAttribute('x1', 9);
-	convTape2.setAttribute('x2', 9 + initLength);
-	convTape2.setAttribute('y1', 18);
-	convTape2.setAttribute('y2', 18);
+	convTape2.setAttribute('x1', motorCP.x);
+	convTape2.setAttribute('x2', drumCP.x + dl);
+	convTape2.setAttribute('y1', motorCP.y + 9);
+	convTape2.setAttribute('y2', motorCP.y + 9);
+	convTape2.setAttribute('transform', `rotate(${initAngle}, ${motorCP.x}, ${motorCP.y})`);
+
 	let conveyor = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 	
 	conveyor.id = elemId;
 	
-	if (initMirror) {
-		conveyor.drum = conveyor.appendChild(newTensionDrum(initLength, 0, true));
-		conveyor.motor = conveyor.appendChild(newMotorDrum(0, 0));
-		conveyor.DKSL2 = conveyor.appendChild(newAd(initLength - 24, 7, 'ДКСЛ'));
-		conveyor.ES_EXT = conveyor.appendChild(newAd(initLength - 24, 16, 'АС'));
-		conveyor.DKSL1 = conveyor.appendChild(newAd(22, 7, 'ДКСЛ'));
-		conveyor.ES_NPU = conveyor.appendChild(newAd(22, 16, 'АС'));
-	}
-	else {
-		conveyor.motor = conveyor.appendChild(newMotorDrum(initLength, 0));
-		conveyor.drum = conveyor.appendChild(newTensionDrum(0, 0, false));
-		conveyor.DKSL1 = conveyor.appendChild(newAd(initLength - 24, 7, 'ДКСЛ'));
-		conveyor.ES_NPU = conveyor.appendChild(newAd(initLength - 24, 16, 'АС'));
-		conveyor.DKSL2 = conveyor.appendChild(newAd(22, 7, 'ДКСЛ'));
-		conveyor.ES_EXT = conveyor.appendChild(newAd(22, 16, 'АС'));
-	};
-	conveyor.ES_ATV = conveyor.appendChild(newAd(initLength/2, 10, 'АТВ'));
-	conveyor.label = conveyor.appendChild(newAd(initLength * 0.65, 10, elemId));
+
+	conveyor.motor = conveyor.appendChild(newMotorDrum(motorCP.x - 9, motorCP.y - 9));
+	conveyor.drum = conveyor.appendChild(newTensionDrum(drumCP.x - 9, drumCP.y - 9, initAngle + 180));
+
+	conveyor.DKSL1 = conveyor.appendChild(newAd(initMotorX + 24, initMotorY + 7, 'ДКСЛ'));
+	conveyor.ES_NPU = conveyor.appendChild(newAd(initMotorX + 24, initMotorY + 16, 'АС'));
+	conveyor.DKSL2 = conveyor.appendChild(newAd(initDrumX - 24, initDrumY + 7, 'ДКСЛ'));
+	conveyor.ES_EXT = conveyor.appendChild(newAd(initDrumX - 24, initDrumY + 16, 'АС'));
+	conveyor.ES_ATV = conveyor.appendChild(newAd((initDrumX - initMotorX) * 0.5 + initMotorX, (initDrumY - initMotorY) * 0.5 + initMotorY + 10, 'АТВ'));
+	conveyor.label = conveyor.appendChild(newAd((initDrumX - initMotorX) * 0.5 - 15 + initMotorX, (initDrumY - initMotorY) * 0.5 + initMotorY + 10, elemId));
 	conveyor.appendChild(convTape1);
 	conveyor.appendChild(convTape2);
 
-	conveyor.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
 	conveyor.fill = 'none';
 	conveyor.setAttribute('stroke', 'black');
 	conveyor.setAttribute('stroke-width', STROKE_WIDTH);
@@ -488,7 +492,48 @@ const ELEVATOR_SHAPE =
 <rect x="23" y="116" width="4" height="5"/>
 <rect x="23" y="110" width="4" height="1"/>`;
 
-newElevator = function(elemId, initX, initY, initHeight, initMirror, initScale) {
+newElevator = function(elemId, initX, initY, initHeight, initMirror) {
+	elevatorJSON = {
+		elemId: [
+			'ATS_WORK',		//УПП в работе
+			'SW_STATUS',	// положение АВ
+			'ATS_RD',		//УПП готов
+			'ES_NPU',		// АС МПУ
+			'ES_EXT',		// АС доп стоп-кнопка 
+			'ES_CAB',		// АС шкаф
+			'ES_PULT',		// АС пульт
+			'ES_BLOCK',		// аварийная блокировка
+			'GREEN_LP',		// лампа на пульте
+			'RED_LP',		// лампа на пульте
+		]
+	};
+	
+	requestProcessor = function() {
+		let req = new XMLHttpRequest();
+		req.open('GET', 'http://' + SERVER_LOCATION + '/data?AGR=' + elemId);
+		req.onreadystatechange = function() {
+			if(this.readyState === 4 && this.status === 200) {
+				resp = JSON.parse(this.response);
+				keys = Object.keys(resp);
+				agrId = keys[0];
+				params = resp[agrId];
+				elevator = mainUnit.getElementById(agrId);
+				if (elevator) {
+					if (params.ATS_RD[0] === 1) {elevator.ready()} else {elevator.notReady()};
+					if (params.ATS_WORK[0] === 1) {elevator.run()}; 
+					if (params.SW_STATUS[0] === 0) {elevator.alarm()};
+					if (params.ES_NPU[0] === 1) {elevator.ES_NPU.alarm()} else {elevator.ES_NPU.hide()};
+					if (params.ES_EXT[0] === 1) {elevator.ES_EXT.alarm()} else {elevator.ES_EXT.hide()};
+					elevator.norm();
+//					if (params.... === 1) {elevator.clogged()};
+//					if (params.... === 1) {elevator.chainBreak()};
+				};
+			};
+		};
+//		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+//		req.send(JSON.stringify(conveyorJSON));
+		req.send();
+	};
 
 
 	let elevator = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -506,7 +551,7 @@ newElevator = function(elemId, initX, initY, initHeight, initMirror, initScale) 
 	elevator.motor.setAttribute('cy', 12);
 	elevator.motor.setAttribute('r', 8);
 	elevatorHead.appendChild(elevator.motor);
-	elevator.setAttribute('transform', `translate(${initX}, ${initY}), scale(${initScale})`);
+	elevator.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
 	elevator.setAttribute('fill', 'none');
 	elevator.style.stroke = 'black';
 	elevator.setAttribute('stroke-width', STROKE_WIDTH);
@@ -547,9 +592,129 @@ newElevator = function(elemId, initX, initY, initHeight, initMirror, initScale) 
 	elevator.chainBreak = function() {
 		elevator.tube.setAttribute('fill', 'red');
 	};
-	return elevator;
-	
-//	setInterval(requestProcessor, 5000);
+	elevator.norm = function() {
+		elevator.tube.setAttribute('fill', 'none');
+		elevator.foot.setAttribute('fill', 'none');
+	};
 
+	setInterval(requestProcessor, 5000);
+
+	return elevator;
 };
 //-----
+
+//---Бункер
+
+const BUNKER_SHAPE = `<path d="M50,40 L30,70 L20,70 L0,40 L50,40 "/><path d="M0,0 L50,0 L50,40 L0,40 L0,0 Z "/>`;
+
+newBunker = function(elemId, initX, initY) {
+	
+	requestProcessor = function() {
+		let req = new XMLHttpRequest();
+		req.open('GET', 'http://' + SERVER_LOCATION + '/data?AGR=' + elemId);
+		req.onreadystatechange = function() {
+			if(this.readyState === 4 && this.status === 200) {
+				resp = JSON.parse(this.response);
+				keys = Object.keys(resp);
+				agrId = keys[0];
+				params = resp[agrId];
+				bunker = mainUnit.getElementById(agrId);
+				if (bunker) {
+				};
+			};
+		};
+		req.send();
+	};
+
+	let bunker = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+	bunker.id = elemId;
+	bunker.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
+	bunker.setAttribute('fill', 'none');
+	bunker.style.stroke = 'black';
+	bunker.setAttribute('stroke-width', STROKE_WIDTH);
+	let bunkerCase = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+	bunkerCase.innerHTML = BUNKER_SHAPE;
+	bunker.bcase = bunker.appendChild(bunkerCase);
+	let levelMeter = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+	levelMeter.setAttribute('x', 10);
+	levelMeter.setAttribute('y', 0);
+	levelMeter.setAttribute('width', 5);
+	levelMeter.setAttribute('height', 70);
+	levelMeter.setAttribute('fill', 'green');
+	levelMeter.style.stroke = 'green';
+	bunker.levelMeter = bunker.appendChild(levelMeter);
+	bunker.label = bunker.appendChild(newAd(20, 20, elemId));
+	bunker.fill = function(level) {
+		levelMeter.setAttribute('height', level * 70);
+		levelMeter.setAttribute('y', (1 - level) * 70);
+	};
+	setInterval(requestProcessor, 5000);
+
+	return bunker;
+};
+
+//------------
+
+//---Классификатор
+
+const CLASSIFER_SHAPE =` 
+<path d="M34,66 L50,66 L50,26 L34,26 L34,66 Z "/>
+<path d="M34,66 L50,66 L45,78 L39,78 L34,66 Z "/>
+<path d="M39,78 L45,78 L45,94 L39,94 L39,78 Z "/>
+<path d="M0,66 L16,66 L16,26 L0,26 L0,66 Z "/>
+<path d="M0,66 L16,66 L11,78 L5,78 L0,66 Z "/>
+<path d="M5,78 L11,78 L11,94 L5,94 L5,78 Z "/>
+<path d="M39,78 L30,103 L20,103 L11,78 "/>
+<path d="M13,73 L36,73 "/>
+<line x1="35" y1="8" x2="15" y2="8"/>
+<line x1="33" y1="10" x2="33" y2="28"/>
+<line x1="30" y1="10" x2="30" y2="14"/>
+<line x1="30" y1="26" x2="30" y2="28"/>
+<line x1="17" y1="10" x2="17" y2="28"/>
+<line x1="20" y1="10" x2="20" y2="14"/>
+<line x1="20" y1="26" x2="20" y2="28"/>
+<path d="M20,17 L20,23 A1,1 0 0,0 21,24 L29,24 A1,1 0 0,0 30,23 L30,17 A1,1 0 0,0 29,16 L21,16 A1,1 0 0,0 20,17 Z "/>
+<path d="M20,17 L20,19 L18,19 L18,17 L20,17 Z "/>
+<path d="M20,21 L20,23 L18,23 L18,21 L20,21 Z "/>
+<path d="M30,30 L30,33 L20,33 L20,30 L30,30 Z "/>
+<path d="M29,2 L29,1 A1,1 0 0,0 28,0 L22,0 A1,1 0 0,0 21,1 L21,2 L29,2 Z "/>
+<path d="M35,26 L35,5 A3,3 0 0,0 32,2 L18,2 A3,3 0 0,0 15,5 L15,26 "/>
+<path d="M16,30 L34,30 "/>
+<path d="M36,73 L13,73 "/>
+<path d="M16,33 L34,33 "/>`;
+
+
+newClassifer = function(elemId, initX, initY) {
+	
+	requestProcessor = function() {
+		let req = new XMLHttpRequest();
+		req.open('GET', 'http://' + SERVER_LOCATION + '/data?AGR=' + elemId);
+		req.onreadystatechange = function() {
+			if(this.readyState === 4 && this.status === 200) {
+				resp = JSON.parse(this.response);
+				keys = Object.keys(resp);
+				agrId = keys[0];
+				params = resp[agrId];
+				classifer = mainUnit.getElementById(agrId);
+				if (classifer) {
+				};
+			};
+		};
+		req.send();
+	};
+
+	let classifer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+	classifer.id = elemId;
+	classifer.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
+	classifer.setAttribute('fill', 'none');
+	classifer.style.stroke = 'black';
+	classifer.setAttribute('stroke-width', STROKE_WIDTH);
+	classifer.innerHTML = CLASSIFER_SHAPE;
+	classifer.label = classifer.appendChild(newAd(20, 20, elemId));
+
+	setInterval(requestProcessor, 5000);
+
+	return classifer;
+};
+
+//------------
