@@ -96,17 +96,6 @@ millRotation = function(initHTML, initX, initY) {
 
 newMill = function(elemId, initX, initY) {
 	const PBP = {x: 1, y: -30};
-	const millJSON = {
-		elemId: [
-			'ROT_LEFT', 'ROT_RIGTH',			// вращение влево-вправо
-			'TMP_ACD', 							// авария-температура подшипников
-			'RUN', 								// работа
-			'ENG_PROT', 						// срабатывание защиты двигателя
-			'ACD_ST',							// состояние авария
-			'P1_1_TMP', 'P1_2_TMP', 'P1_3_TMP',	// температура подшипника со стороны привода
-			'P2_1_TMP', 'P2_2_TMP', 'P2_3_TMP'	// температура подшипника со стороны загрузки
-		]
-	};
 
 	requestProcessor = function() {
 		let req = new XMLHttpRequest();
@@ -115,24 +104,22 @@ newMill = function(elemId, initX, initY) {
 			if(this.readyState === 4 && this.status === 200) {
 				resp = JSON.parse(this.response);
 				keys = Object.keys(resp);
-				agrId = keys[1];
+				agrId = keys[0];
 				params = resp[agrId];
 				mill = mainUnit.getElementById(agrId);
 				if (mill) {
 					if (params.MILL_WORK[0] === 1) {mill.driver6Kv.run()} else {mill.driver6Kv.notReady()};
-					mill.P1_1_temperature.setText(params.Temp1_Bear1[0][0]);
-					mill.P1_2_temperature.setText(params.Temp2_Bear1[0][0]);
-					mill.P1_3_temperature.setText(params.Temp3_Bear1[0][0]);
-					mill.P2_1_temperature.setText(params.Temp1_Bear2[0][0]);
-					mill.P2_2_temperature.setText(params.Temp3_Bear2[0][0]);
-					mill.P2_3_temperature.setText(params.Temp3_Bear2[0][0]);
+					mill.P1_1_temperature.setText(params.P1_1_TEMP[0][0]);
+					mill.P1_2_temperature.setText(params.P1_2_TEMP[0][0]);
+					mill.P1_3_temperature.setText(params.P1_3_TEMP[0][0]);
+					mill.P2_1_temperature.setText(params.P2_1_TEMP[0][0]);
+					mill.P2_2_temperature.setText(params.P2_2_TEMP[0][0]);
+					mill.P2_3_temperature.setText(params.P2_3_TEMP[0][0]);
 					if (params.BLK_1_601[0] === 1) {mill.os_1_601.block()} else {mill.os_1_601.norm()};
 					if (params.BLK_1_602[0] === 1) {mill.os_1_602.block()} else {mill.os_1_602.norm()};
 				};
 			};
 		};
-//		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-//		req.send(JSON.stringify(millJSON));
 		req.send();
 	};
 	
@@ -157,9 +144,6 @@ newMill = function(elemId, initX, initY) {
 	mill.P2_3_temperature = mill.appendChild(newAd(PBP.x + 240, PBP.y + 70, '0 C°'));
 	mill.os_1_601 = mill.appendChild(newOilStation('', 65, 52, 1));
 	mill.os_1_602 = mill.appendChild(newOilStation('', 220, 52, 1));
-
-
-
 	mill.label = mill.appendChild(newAd(PBP.x + 120, PBP.y + 50, 'Агрегат: ' + elemId));
 	mill.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
 	mill.setAttribute('fill', 'none');
@@ -386,7 +370,7 @@ newConveyor = function(elemId, initMotorX, initMotorY, initDrumX, initDrumY) {
 					if (params.ATS_WORK[0] === 1) {conveyor.motor.run()}; 
 					if (params.SW_STATUS[0] === 0) {conveyor.motor.alarm()};
 					if (params.ALR_SPEED[0] === 1) {conveyor.drum.alarm()} else {conveyor.drum.norm()};
-					if (params.ES_NPU[0] === 1) {conveyor.ES_NPU.alarm()} else {conveyor.ES_NPU.hide()};
+					if (params.ES_MPU[0] === 1) {conveyor.ES_MPU.alarm()} else {conveyor.ES_MPU.hide()};
 					if (params.ES_ATV[0] === 1) {conveyor.ES_ATV.alarm()} else {conveyor.ES_ATV.hide()};
 					if (params.ES_EXT[0] === 1) {conveyor.ES_EXT.alarm()} else {conveyor.ES_EXT.hide()};
 					if (params.ES_ATV[0] === 1) {conveyor.ES_ATV.alarm()} else {conveyor.ES_ATV.hide()};
@@ -444,7 +428,7 @@ newConveyor = function(elemId, initMotorX, initMotorY, initDrumX, initDrumY) {
 	conveyor.drum = conveyor.appendChild(newTensionDrum(drumCP.x - 9, drumCP.y - 9, initAngle + 180));
 
 	conveyor.DKSL1 = conveyor.appendChild(newAd(initMotorX + 24, initMotorY + 7, 'ДКСЛ'));
-	conveyor.ES_NPU = conveyor.appendChild(newAd(initMotorX + 24, initMotorY + 16, 'АС'));
+	conveyor.ES_MPU = conveyor.appendChild(newAd(initMotorX + 24, initMotorY + 16, 'АС'));
 	conveyor.DKSL2 = conveyor.appendChild(newAd(initDrumX - 24, initDrumY + 7, 'ДКСЛ'));
 	conveyor.ES_EXT = conveyor.appendChild(newAd(initDrumX - 24, initDrumY + 16, 'АС'));
 	conveyor.ES_ATV = conveyor.appendChild(newAd((initDrumX - initMotorX) * 0.5 + initMotorX, (initDrumY - initMotorY) * 0.5 + initMotorY + 10, 'АТВ'));
@@ -522,7 +506,7 @@ newElevator = function(elemId, initX, initY, initHeight, initMirror) {
 					if (params.ATS_RD[0] === 1) {elevator.ready()} else {elevator.notReady()};
 					if (params.ATS_WORK[0] === 1) {elevator.run()}; 
 					if (params.SW_STATUS[0] === 0) {elevator.alarm()};
-					if (params.ES_NPU[0] === 1) {elevator.ES_NPU.alarm()} else {elevator.ES_NPU.hide()};
+					if (params.ES_MPU[0] === 1) {elevator.ES_MPU.alarm()} else {elevator.ES_MPU.hide()};
 					if (params.ES_EXT[0] === 1) {elevator.ES_EXT.alarm()} else {elevator.ES_EXT.hide()};
 					elevator.norm();
 //					if (params.... === 1) {elevator.clogged()};
@@ -572,7 +556,7 @@ newElevator = function(elemId, initX, initY, initHeight, initMirror) {
 	elevator.tube = elevator.appendChild(elevatorTube);
 	elevator.appendChild(elevator.foot);
 	elevator.label = elevator.appendChild(newAd(16, 50, elemId));
-	elevator.ES_NPU = elevator.appendChild(newAd(18, 28 - initHeight, 'АС'));
+	elevator.ES_MPU = elevator.appendChild(newAd(18, 28 - initHeight, 'АС'));
 	elevator.ES_EXT = elevator.appendChild(newAd(18, 107, 'АС'));
 	elevator.ready = function() {
 		elevator.motor.setAttribute('fill', 'blue');
