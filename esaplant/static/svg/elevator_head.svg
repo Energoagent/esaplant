@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35mm" height="30mm" viewBox="0 0 35 30">
-    <g fill="none" stroke="black" stroke-width="0.5">
-        <circle cx="13" cy="12" r="8"/>
-        <circle cx="13" cy="12" r="1"/>
-        <path d="M0,30 L0,13 A13,13 0 1,1 26,14 L35,26 L20,26 L20,30 L0,30 Z "/>
-    </g>
-</svg>

@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18mm" height="29mm" viewBox="0 0 18 29">
-    <g id="conveior_driver_drum_motor" fill="none" stroke="black" stroke-width="0.5">
-        <circle cx="9" cy="18" r="9"/>
-        <circle cx="9" cy="18" r="2"/>
-        <path d="M7,15 L0,28 L0,29 L18,29 L18,28 L11,15 L7,15 "/>
-        <circle cx="9" cy="18" r="8"/>
-    </g>
-</svg>

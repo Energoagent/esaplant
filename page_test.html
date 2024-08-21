@@ -32,14 +32,31 @@
 					elevator_1_7 = mainUnit.appendChild(newElevator('1_7', 250, 80, 40, false));
 					elevator_1_7.foot.setAttribute('transform', `translate(50, 0), scale(-1, 1)`);
 					classifer_1_8 = mainUnit.appendChild(newClassifer('1_8', 300, 50));
+					bunker_1_9 = mainUnit.appendChild(newBunker('1_9', 500, 60));
+					bunker_1_9.fill(0);
+					
+// цепочка шнеков на грануляцию
+					screw_1_101 = mainUnit.appendChild(newScrew('1_101', 350, 150, 300, 170));
+					screw_1_102 = mainUnit.appendChild(newScrew('1_102', 400, 150, 350, 170));
+					screw_1_11 = mainUnit.appendChild(newScrew('1_11', 450, 150, 400, 170));
+					screw_1_12 = mainUnit.appendChild(newScrew('AGR_1_12', 500, 150, 450, 170));
+					screw_1_13 = mainUnit.appendChild(newScrew('AGR_1_13', 700, 80, 500, 170));
+					screw_1_131 = mainUnit.appendChild(newScrew('AGR_1_131', 750, 80, 700, 100));
+					screw_1_132 = mainUnit.appendChild(newScrew('AGR_1_132', 800, 80, 750, 100));
+					screw_1_133 = mainUnit.appendChild(newScrew('AGR_1_133', 850, 80, 800, 100));
+					screw_1_134 = mainUnit.appendChild(newScrew('AGR_1_134', 900, 80, 850, 100));
+
+// обратка
 					conveior_1_21 = mainUnit.appendChild(newConveyor('1_21', 600, 300, 500, 330));
 					conveior_1_22 = mainUnit.appendChild(newConveyor('1_22', 750, 300, 600, 330));
 					conveior_2_19 = mainUnit.appendChild(newConveyor('2_19', 500, 300, 400, 330));
 					conveior_2_191 = mainUnit.appendChild(newConveyor('2_191', 400, 300, 300, 330));
+
+
 					dryingUnitLink = mainUnit.appendChild(newAd(250, 300, '>обратка от участка сушки'));
 					dryingUnitLink.style.cursor = 'pointer';
 					dryingUnitLink.onclick = function() {this.style.stroke = 'red'; this.style.fill = 'red';};
-					grainerUnitLink = mainUnit.appendChild(newAd(620, 100, '>подача на участок грануляции'));
+					grainerUnitLink = mainUnit.appendChild(newAd(700, 50, '>подача на участок грануляции'));
 					grainerUnitLink.style.cursor = 'pointer';
 					grainerUnitLink.onclick = function() {this.style.stroke = 'red'; this.style.fill = 'red';};
 				</script>

@@ -109,14 +109,18 @@ newMill = function(elemId, initX, initY) {
 				mill = mainUnit.getElementById(agrId);
 				if (mill) {
 					if (params.MILL_WORK[0] === 1) {mill.driver6Kv.run()} else {mill.driver6Kv.notReady()};
-					mill.P1_1_temperature.setText(params.P1_1_TEMP[0][0]);
-					mill.P1_2_temperature.setText(params.P1_2_TEMP[0][0]);
-					mill.P1_3_temperature.setText(params.P1_3_TEMP[0][0]);
-					mill.P2_1_temperature.setText(params.P2_1_TEMP[0][0]);
-					mill.P2_2_temperature.setText(params.P2_2_TEMP[0][0]);
-					mill.P2_3_temperature.setText(params.P2_3_TEMP[0][0]);
+					mill.PRESSURE_1.setText(params.PRESSURE_1[0][0] + 'кПа');
+					mill.P1_1_temperature.setText(params.P1_1_TEMP[0][0] + 'C°');
+					mill.P1_2_temperature.setText(params.P1_2_TEMP[0][0] + 'C°');
+					mill.P1_3_temperature.setText(params.P1_3_TEMP[0][0] + 'C°');
+					mill.PRESSURE_2.setText(params.PRESSURE_2[0][0] + 'кПа');
+					mill.P2_1_temperature.setText(params.P2_1_TEMP[0][0] + 'C°');
+					mill.P2_2_temperature.setText(params.P2_2_TEMP[0][0] + 'C°');
+					mill.P2_3_temperature.setText(params.P2_3_TEMP[0][0] + 'C°');
 					if (params.BLK_1_601[0] === 1) {mill.os_1_601.block()} else {mill.os_1_601.norm()};
 					if (params.BLK_1_602[0] === 1) {mill.os_1_602.block()} else {mill.os_1_602.norm()};
+					if (params.BLK_CHAIN_INSTALL[0] === 1) {mill.fenceControl.alarm()} else {mill.chainControl.hide()};
+					if (params.FENCE_REM[0] === 1) {mill.fenceControl.alarm()} else {mill.fenceControl.hide()};
 				};
 			};
 		};
@@ -128,6 +132,8 @@ newMill = function(elemId, initX, initY) {
 	mill.innerHTML = MILL_SHAPE;
 	mill.secondDriver = mill.appendChild(newDriverReducer(PBP.x - 15, PBP.y + 85));
 	mill.driver6Kv = mill.appendChild(newDriver6kV(PBP.x - 80, PBP.y + 55));
+	mill.chainControl = mill.appendChild(newAd(PBP.x - 85, PBP.y + 105, 'цепь установлена'));
+	mill.fenceControl = mill.appendChild(newAd(PBP.x - 85, PBP.y + 115, 'ограждение снято'));
 	mill.rotationLeft = mill.appendChild(millRotation(MILL_ROTATION_LEFT, PBP.x + 160, PBP.y + 30));
 	mill.rotationLeft.hide();
 	mill.rotationRigth = mill.appendChild(millRotation(MILL_ROTATION_RIGHT, PBP.x + 100, PBP.y + 30));
@@ -136,15 +142,17 @@ newMill = function(elemId, initX, initY) {
 //	mill.driverRun = mill.appendChild(newAd(PBP.x, PBP.y + 6, 'Работа двигателя'));
 	mill.driverProtection = mill.appendChild(newAd(PBP.x + 120, PBP.y + 60, 'Срабатывание защиты'));
 	mill.accidentState = mill.appendChild(newAd(PBP.x + 120, PBP.y + 70, 'Аварийное состояние'));
+	mill.PRESSURE_1 = mill.appendChild(newAd(PBP.x + 30, PBP.y + 40, 'кПа'));
 	mill.P1_1_temperature = mill.appendChild(newAd(PBP.x + 70, PBP.y + 50, '0 C°'));
 	mill.P1_2_temperature = mill.appendChild(newAd(PBP.x + 70, PBP.y + 60, '0 C°'));
 	mill.P1_3_temperature = mill.appendChild(newAd(PBP.x + 70, PBP.y + 70, '0 C°'));
+	mill.PRESSURE_2 = mill.appendChild(newAd(PBP.x + 260, PBP.y + 40, 'кПа'));
 	mill.P2_1_temperature = mill.appendChild(newAd(PBP.x + 240, PBP.y + 50, '0 C°'));
 	mill.P2_2_temperature = mill.appendChild(newAd(PBP.x + 240, PBP.y + 60, '0 C°'));
 	mill.P2_3_temperature = mill.appendChild(newAd(PBP.x + 240, PBP.y + 70, '0 C°'));
 	mill.os_1_601 = mill.appendChild(newOilStation('', 65, 52, 1));
 	mill.os_1_602 = mill.appendChild(newOilStation('', 220, 52, 1));
-	mill.label = mill.appendChild(newAd(PBP.x + 120, PBP.y + 50, 'Агрегат: ' + elemId));
+	mill.label = mill.appendChild(newAd(PBP.x + 120, PBP.y + 50, elemId));
 	mill.setAttribute('transform', `translate(${initX}, ${initY}), scale(1)`);
 	mill.setAttribute('fill', 'none');
 	mill.setAttribute('stroke-width', STROKE_WIDTH);
@@ -310,28 +318,6 @@ newTensionDrum = function(initX, initY, initAngle) {
 	return convTension;
 }
 
-newMotorDrum = function(initX, initY) {	
-	let convMotor = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	convMotor.innerHTML = CONVEYOR_MOTOR_DRUM_SHAPE;
-	convMotor.setAttribute('transform', `translate(${initX}, ${initY})`);
-	convMotor.fill = 'none';
-	convMotor.style.stroke = 'black';
-	convMotor.setAttribute('stroke-width', STROKE_WIDTH);
-	convMotor.notReady = function() {
-		convMotor.setAttribute('fill', 'orange');
-	};
-	convMotor.ready = function() {
-		convMotor.setAttribute('fill', 'blue');
-	};
-	convMotor.run = function() {
-		convMotor.setAttribute('fill', 'green');
-	};
-	convMotor.alarm = function() {
-		convMotor.setAttribute('fill', 'red');
-	};
-	return convMotor;
-};
-
 newConveyor = function(elemId, initMotorX, initMotorY, initDrumX, initDrumY) {
 	
 	conveyorJSON = {
@@ -374,34 +360,41 @@ newConveyor = function(elemId, initMotorX, initMotorY, initDrumX, initDrumY) {
 					if (params.ES_ATV[0] === 1) {conveyor.ES_ATV.alarm()} else {conveyor.ES_ATV.hide()};
 					if (params.ES_EXT[0] === 1) {conveyor.ES_EXT.alarm()} else {conveyor.ES_EXT.hide()};
 					if (params.ES_ATV[0] === 1) {conveyor.ES_ATV.alarm()} else {conveyor.ES_ATV.hide()};
-					if (params.WRN_DKSL1[0] === 1) 
-						{conveyor.DKSL1.warning()}
-					else
-						if (params.ALR_DKSL1[0] === 1)
-							{conveyor.DKSL1.alarm()}
-						else {conveyor.DKSL1.hide()};
-					if (params.WRN_DKSL2[0] === 1) 
-						{conveyor.DKSL2.warning()}
-					else
-						if (params.ALR_DKSL2[0] === 1)
-							{conveyor.DKSL1.alarm()}
-						else {conveyor.DKSL2.hide()};
+					conveyor.DKSL1.hide();
+					if (params.WRN_DKSL1[0] === 1) {conveyor.DKSL1.warning()};
+					if (params.ALR_DKSL1[0] === 1) {conveyor.DKSL1.alarm()}
+					conveyor.DKSL2.hide();
+					if (params.WRN_DKSL2[0] === 1) {conveyor.DKSL2.warning()};
+					if (params.ALR_DKSL2[0] === 1) {conveyor.DKSL2.alarm()}
 				};
 			};
 		};
-//		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-//		req.send(JSON.stringify(conveyorJSON));
 		req.send();
 	};
+
+	newMotorDrum = function(initX, initY) {	
+		let motor = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+		motor.innerHTML = CONVEYOR_MOTOR_DRUM_SHAPE;
+		motor.setAttribute('transform', `translate(${initX}, ${initY})`);
+		motor.fill = 'none';
+		motor.style.stroke = 'black';
+		motor.setAttribute('stroke-width', STROKE_WIDTH);
+		motor.notReady = function() {motor.setAttribute('fill', 'orange')};
+		motor.ready = function() {motor.setAttribute('fill', 'blue')};
+		motor.run = function() {motor.setAttribute('fill', 'green')};
+		motor.alarm = function() {motor.setAttribute('fill', 'red')};
+		return motor;
+	};
+
 
 	let motorCP = {'x': initMotorX + 9, 'y': initMotorY + 9, 'dx': initDrumX - initMotorX, 'dy': initDrumY - initMotorY};
 	let drumCP = {'x': initDrumX + 9, 'y': initDrumY + 9};
 	let initAngle = 0;
-//	if (motorCP.dx !== 0) {initAngle = Math.atan(motorCP.dy / motorCP.dx)* 180 / Math.PI};
-//	let dl = (initAngle > 0) ? (motorCP.dy/Math.tan((180 - initAngle)/2)): 0;
 	if (motorCP.dx !== 0) {initAngle = Math.atan(motorCP.dy / motorCP.dx)};
 	let dl = 0;
-	if (initAngle > 0) {dl = motorCP.dy / Math.tan((Math.PI - initAngle) / 2)};
+	if (initAngle > 0) 
+		{dl = motorCP.dy / Math.tan((Math.PI - initAngle) / 2)}
+		else {dl = - motorCP.dy / Math.tan((Math.PI + initAngle) / 2)};
 	initAngle = initAngle * 180 / Math.PI;
 //console.log(elemId, motorCP, drumCP, initAngle, dl);
 
@@ -440,23 +433,10 @@ newConveyor = function(elemId, initMotorX, initMotorY, initDrumX, initDrumY) {
 	conveyor.setAttribute('stroke', 'black');
 	conveyor.setAttribute('stroke-width', STROKE_WIDTH);
 
-	conveyor.notReady = function() {
-		conveyor.setAttribute('fill', 'orange');
-	};
-	conveyor.ready = function() {
-		conveyor.setAttribute('fill', 'blue');
-	};
-	conveyor.run = function() {
-		conveyor.setAttribute('fill', 'green');
-	};
-	conveyor.alarm = function() {
-		conveyor.setAttribute('fill', 'red');
-	};
-//	conveyor.DKSL1.hide();
-//	conveyor.DKSL2.hide();
-//	conveyor.ES_NPU.hide();
-//	conveyor.ES_EXT.hide();
-//	conveyor.ES_ATV.hide();
+	conveyor.notReady = function() {conveyor.motor.notReady()};
+	conveyor.ready = function() {conveyor.motor.ready()};
+	conveyor.run = function() {conveyor.motor.run()};
+	conveyor.alarm = function() {conveyor.motor.alarm()};
 	
 	setInterval(requestProcessor, 5000);
 	
@@ -514,8 +494,6 @@ newElevator = function(elemId, initX, initY, initHeight, initMirror) {
 				};
 			};
 		};
-//		req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-//		req.send(JSON.stringify(conveyorJSON));
 		req.send();
 	};
 
@@ -524,12 +502,8 @@ newElevator = function(elemId, initX, initY, initHeight, initMirror) {
 	elevator.id = elemId;
 	let elevatorHead = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 	elevatorHead.innerHTML = ELEVATOR_HEAD_SHAPE;
-	if (initMirror) {
-		elevatorHead.setAttribute('transform', `translate(35, ${ 0 - initHeight}), scale(-1, 1)`);
-	}
-	else {
-		elevatorHead.setAttribute('transform', `translate(15, ${ 0 - initHeight}), scale(1)`);
-	};
+	if (initMirror) {elevatorHead.setAttribute('transform', `translate(35, ${ 0 - initHeight}), scale(-1, 1)`)}
+	else {elevatorHead.setAttribute('transform', `translate(15, ${ 0 - initHeight}), scale(1)`)};
 	elevator.motor = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 	elevator.motor.setAttribute('cx', 13);
 	elevator.motor.setAttribute('cy', 12);
@@ -546,36 +520,20 @@ newElevator = function(elemId, initX, initY, initHeight, initMirror) {
 	elevatorTube.setAttribute('height', 80 + initHeight);
 	elevator.foot = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 	elevator.foot.innerHTML = ELEVATOR_SHAPE;
-	if (initMirror) {
-		elevator.foot.setAttribute('transform', `translate(50, 0), scale(-1, 1)`);
-	}
-	else {
-		elevator.foot.setAttribute('transform', `translate(0, 0), scale(1)`);
-	};
+	if (initMirror) {elevator.foot.setAttribute('transform', `translate(50, 0), scale(-1, 1)`)}
+	else {elevator.foot.setAttribute('transform', `translate(0, 0), scale(1)`)};
 	elevator.head = elevator.appendChild(elevatorHead);
 	elevator.tube = elevator.appendChild(elevatorTube);
 	elevator.appendChild(elevator.foot);
 	elevator.label = elevator.appendChild(newAd(16, 50, elemId));
 	elevator.ES_MPU = elevator.appendChild(newAd(18, 28 - initHeight, 'АС'));
 	elevator.ES_EXT = elevator.appendChild(newAd(18, 107, 'АС'));
-	elevator.ready = function() {
-		elevator.motor.setAttribute('fill', 'blue');
-	};
-	elevator.notReady = function() {
-		elevator.motor.setAttribute('fill', 'orange');
-	};
-	elevator.run = function() {
-		elevator.motor.setAttribute('fill', 'green');
-	};
-	elevator.alarm = function() {
-		elevator.motor.setAttribute('fill', 'red');
-	};
-	elevator.clogged = function() {
-		elevator.foot.setAttribute('fill', 'red');
-	};
-	elevator.chainBreak = function() {
-		elevator.tube.setAttribute('fill', 'red');
-	};
+	elevator.ready = function() {elevator.motor.setAttribute('fill', 'blue')};
+	elevator.notReady = function() {elevator.motor.setAttribute('fill', 'orange')};
+	elevator.run = function() {elevator.motor.setAttribute('fill', 'green')};
+	elevator.alarm = function() {elevator.motor.setAttribute('fill', 'red')};
+	elevator.clogged = function() {elevator.foot.setAttribute('fill', 'red')};
+	elevator.chainBreak = function() {elevator.tube.setAttribute('fill', 'red')};
 	elevator.norm = function() {
 		elevator.tube.setAttribute('fill', 'none');
 		elevator.foot.setAttribute('fill', 'none');
@@ -632,6 +590,7 @@ newBunker = function(elemId, initX, initY) {
 		levelMeter.setAttribute('height', level * 70);
 		levelMeter.setAttribute('y', (1 - level) * 70);
 	};
+
 	setInterval(requestProcessor, 5000);
 
 	return bunker;
@@ -694,7 +653,7 @@ newClassifer = function(elemId, initX, initY) {
 	classifer.style.stroke = 'black';
 	classifer.setAttribute('stroke-width', STROKE_WIDTH);
 	classifer.innerHTML = CLASSIFER_SHAPE;
-	classifer.label = classifer.appendChild(newAd(20, 20, elemId));
+	classifer.label = classifer.appendChild(newAd(20, 50, elemId));
 
 	setInterval(requestProcessor, 5000);
 
@@ -702,3 +661,105 @@ newClassifer = function(elemId, initX, initY) {
 };
 
 //------------
+
+//------- шнековый транспортер
+
+newScrew = function(elemId, initMotorX, initMotorY, initSupplyX, initSupplyY) {
+	
+	conveyorJSON = {
+		elemId: [
+			'ATS_WORK',		//УПП в работе
+			'SW_STATUS',	// положение АВ
+			'ATS_RD',		//УПП готов
+			'ES_ATV',		// не используется
+			'ES_NPU',		// АС МПУ
+			'ES_EXT',		// АС доп стоп-кнопка 
+			'ES_CAB',		// АС шкаф
+			'ES_PULT',		// АС пульт
+			'ALR_SPEED',	// не используется
+			'ALR_DKSL1',	// не используется
+			'ALR_DKSL2',	// не используется
+			'WRN_DKSL1',	// не используется
+			'WRN_DKSL2',	// не используется
+			'ES_BLOCK',		// аварийная блокировка
+			'GREEN_LP',		// лампа на пульте
+			'RED_LP',		// лампа на пульте
+		]
+	};
+	
+	requestProcessor = function() {
+		let req = new XMLHttpRequest();
+		req.open('GET', 'http://' + SERVER_LOCATION + '/data?AGR=' + elemId);
+		req.onreadystatechange = function() {
+			if(this.readyState === 4 && this.status === 200) {
+				resp = JSON.parse(this.response);
+				keys = Object.keys(resp);
+				agrId = keys[0];
+				params = resp[agrId];
+				let screw = mainUnit.getElementById(agrId);
+				if (screw) {
+					if (params.ATS_RD[0] === 1) {screw.motor.ready()} else {screw.motor.notReady()};
+					if (params.ATS_WORK[0] === 1) {screw.motor.run()}; 
+					if (params.SW_STATUS[0] === 0) {screw.motor.alarm()};
+					if (params.ES_MPU[0] === 1) {screw.ES_MPU.alarm()} else {screw.ES_MPU.hide()};
+					if (params.ES_EXT[0] === 1) {screw.ES_EXT.alarm()} else {screw.ES_EXT.hide()};
+				};
+			};
+		};
+		req.send();
+	};
+
+	newMotor = function(initX, initY) {	
+		let motor = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+		motor.innerHTML = `<circle cx="5" cy="5" r="5"/><circle cx="5" cy="5" r="2"/>`;
+		motor.setAttribute('transform', `translate(${initX}, ${initY})`);
+		motor.fill = 'none';
+		motor.style.stroke = 'black';
+		motor.setAttribute('stroke-width', STROKE_WIDTH);
+		motor.notReady = function() {motor.setAttribute('fill', 'orange')};
+		motor.ready = function() {motor.setAttribute('fill', 'blue')};
+		motor.run = function() {motor.setAttribute('fill', 'green')};
+		motor.alarm = function() {motor.setAttribute('fill', 'red')};
+		return motor;
+	};
+
+	let motorCP = {'x': initMotorX + 5, 'y': initMotorY + 5, 'dx': initSupplyX - initMotorX, 'dy': initSupplyY - initMotorY};
+	let initAngle = 0;
+	if (motorCP.dx !== 0) {initAngle = Math.atan(motorCP.dy / motorCP.dx)};
+	let dl = 0;
+	if (initAngle > 0) 
+		{dl = motorCP.dy / Math.tan((Math.PI - initAngle) / 2)}
+		else {dl = - motorCP.dy / Math.tan((Math.PI + initAngle) / 2)};
+	initAngle = initAngle * 180 / Math.PI;
+
+	let screwЕnclosure = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+	screwЕnclosure.setAttribute('points', `${motorCP.x},${motorCP.y + 5} ${initSupplyX},${motorCP.y + 5} ${initSupplyX},${motorCP.y - 5} ${motorCP.x},${motorCP.y - 5}`);
+	screwЕnclosure.setAttribute('fill', 'none');
+//	if (motorCP.dx >= 0) {screwЕnclosure.setAttribute('transform', `rotate(${initAngle}, ${motorCP.x}, ${motorCP.y})`)}
+//	else {screwЕnclosure.setAttribute('transform', `rotate(${initAngle + 2 * (90 - initAngle)}, ${motorCP.x}, ${motorCP.y})`)};
+	screwЕnclosure.setAttribute('transform', `rotate(${initAngle}, ${motorCP.x}, ${motorCP.y})`);
+
+	let screw = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+	
+	screw.id = elemId;
+	
+	screw.motor = screw.appendChild(newMotor(motorCP.x - 5, motorCP.y - 5));
+
+	screw.ES_MPU = screw.appendChild(newAd(initMotorX + 24, initMotorY + 16, 'АС'));
+	screw.ES_EXT = screw.appendChild(newAd(initSupplyX - 24, initSupplyY + 16, 'АС'));
+	screw.label = screw.appendChild(newAd((initSupplyX - initMotorX) * 0.5 - 15 + initMotorX, (initSupplyY - initMotorY) * 0.5 + initMotorY + 10, elemId));
+	screw.appendChild(screwЕnclosure);
+
+	screw.fill = 'none';
+	screw.setAttribute('stroke', 'black');
+	screw.setAttribute('stroke-width', STROKE_WIDTH);
+
+	screw.notReady = function() {screw.motor.notReady()};
+	screw.ready = function() {screw.motor.ready()};
+	screw.run = function() {screw.motor.run()};
+	screw.alarm = function() {screw.motor.alarm()};
+	
+	setInterval(requestProcessor, 5000);
+	
+	return screw;
+};
