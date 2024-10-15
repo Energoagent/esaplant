@@ -106,17 +106,18 @@ newMill = function(elemId, initX, initY) {
 				keys = Object.keys(resp);
 				agrId = keys[0];
 				params = resp[agrId];
+console.log(params);
 				mill = mainUnit.getElementById(agrId);
 				if (mill) {
 					if (params.MILL_WORK[0] === 1) {mill.driver6Kv.run()} else {mill.driver6Kv.notReady()};
 					mill.PRESSURE_1.setText(params.PRESSURE_1[0][0] + 'кПа');
-					mill.P1_1_temperature.setText(params.P1_1_TEMP[0][0] + 'C°');
-					mill.P1_2_temperature.setText(params.P1_2_TEMP[0][0] + 'C°');
-					mill.P1_3_temperature.setText(params.P1_3_TEMP[0][0] + 'C°');
+					mill.P1_1_temperature.setText(params.P1_1_TEMP[0] + 'C°');
+					mill.P1_2_temperature.setText(params.P1_2_TEMP[0] + 'C°');
+					mill.P1_3_temperature.setText(params.P1_3_TEMP[0] + 'C°');
 					mill.PRESSURE_2.setText(params.PRESSURE_2[0][0] + 'кПа');
-					mill.P2_1_temperature.setText(params.P2_1_TEMP[0][0] + 'C°');
-					mill.P2_2_temperature.setText(params.P2_2_TEMP[0][0] + 'C°');
-					mill.P2_3_temperature.setText(params.P2_3_TEMP[0][0] + 'C°');
+					mill.P2_1_temperature.setText(params.P2_1_TEMP[0] + 'C°');
+					mill.P2_2_temperature.setText(params.P2_2_TEMP[0] + 'C°');
+					mill.P2_3_temperature.setText(params.P2_3_TEMP[0] + 'C°');
 					if (params.BLK_1_601[0] === 1) {mill.os_1_601.block()} else {mill.os_1_601.norm()};
 					if (params.BLK_1_602[0] === 1) {mill.os_1_602.block()} else {mill.os_1_602.norm()};
 					if (params.BLK_CHAIN_INSTALL[0] === 1) {mill.fenceControl.alarm()} else {mill.chainControl.hide()};
