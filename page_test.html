@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="./static/css/styles.css">
 		<script src="./static/js/scripts.js"></script>
 		<script src="./static/js/svgelements.js"></script>
+		<script src="./static/js/svgdefs.js"></script>
 	</head>
 <!--	<body class="text_summary" onresize="svgScale();" onload="svgScale();">-->
 	<body class="text_summary">
@@ -17,10 +18,14 @@
 		</div>
 		<div>
 			<svg id="mainUnit" xmlns="http://www.w3.org/2000/svg"  width="1832" height="1008" viewBox="-1 -1 1834 1010" version="1.1">
+				<defs></defs>
 				<script>
+//					setDefs();
 //					drawPixelGrid(mainUnit, 50, 50);
 					mainUnit.setAttribute('fill-opacity', 0.6);
 					mainUnit.setAttribute('transform', 'translate(600, 600), scale(2)');
+//					conveior_2_17 = document.getElementById('2_17');
+//console.log(conveior_2_17);
 					bunker_1_1 = mainUnit.appendChild(newBunker('1_1', 850, 150));
 					bunker_1_1.fill(0);
 					conveior_1_2 = mainUnit.appendChild(newConveyor('1_2', 800, 230, 900, 250));
