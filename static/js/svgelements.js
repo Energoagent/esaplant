@@ -438,8 +438,12 @@ newConveyor = function(elemId, initMotorX, initMotorY, initDrumX, initDrumY) {
 	conveyor.ready = function() {conveyor.motor.ready()};
 	conveyor.run = function() {conveyor.motor.run()};
 	conveyor.alarm = function() {conveyor.motor.alarm()};
-	
-	setInterval(requestProcessor, 5000);
+	conveyor.info = document.createElement('p');
+	conveyor.onclick = function() {
+		infoDialog.innerHTML = `<div style="padding: 0; border: none;">агрегат ${conveyor.id}<br>состояние:<br>УПП - работа<br>скорость - 50%</div>`;
+		infoDialog.showModal();
+	};
+//	setInterval(requestProcessor, 5000);
 	
 	return conveyor;
 };
