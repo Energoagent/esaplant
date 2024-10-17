@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>ESA SCADA</title>
+		<meta name="viewport" content="height=device-height, width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="./static/css/styles.css">
+		<script src="./static/js/svgdefs.js"></script>
+		<script src="./static/js/objects.js"></script>
+	</head>
+	<body class="text_summary">
+		<div>
+			<form id="navigation">
+				<button class="btn btn-basic disabled">МНЕМОСХЕМА</button>
+			</form>
+		</div>
+		<div>
+			<svg xmlns="http://www.w3.org/2000/svg"  width="1832" height="1008" viewBox="-1 -1 1834 1010" version="1.1">
+				<g id="mainUnit" fill="none" stroke="black" stroke-width="0.5" transform="scale(2)">
+					<script>
+						mainUnit.innerHTML = DRYAER_UNIT_SHAPE;
+						elevator_2_16 = newElevator(document.getElementById('2_16'));
+						conveior_2_17 = newConveyor(document.getElementById('2_17'));
+						conveior_2_18 = newConveyor(document.getElementById('2_18'));
+						conveior_2_7 = newConveyor(document.getElementById('2_7'));
+						conveior_2_8 = newConveyor(document.getElementById('2_8'));
+						elevator_2_10 = newElevator(document.getElementById('2_10'));
+						separator_2_12 = newSeparatorDrum(document.getElementById('2_12'));
+						separator_2_13 = newSeparatorDrum(document.getElementById('2_13'));
+						conveior_2_15 = newConveyor(document.getElementById('2_15'));
+						conveior_3_1 = newConveyor(document.getElementById('3_1'));
+						conveior_3_2 = newConveyor(document.getElementById('3_2'));
+						conveior_3_3 = newConveyor(document.getElementById('3_3'));
+						conveior_3_31 = newConveyor(document.getElementById('3_31'));
+						elevator_3_4 = newElevator(document.getElementById('3_4'));
+					</script>
+				</g>
+			</svg>
+		</div>
+	</body>
+</html>
