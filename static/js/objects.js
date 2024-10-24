@@ -48,9 +48,9 @@ newConveyor = function(conveyorSVG) {
 				params = resp[agrId];
 				if (params) {
 					conveyor = document.getElementById(agrId);
-					if (params.ATS_RD[0] === 1) {conveyor.sensor.ready()} else {conveyor.sensor.notReady()};
-					if (params.ATS_WORK[0] === 1) {conveyor.sensor.run()}; 
-					if (params.SW_STATUS[0] === 0) {conveyor.sensor.alarm()};
+					if (params.ATS_RD[0] === 1) {conveyor.motor.ready()} else {conveyor.motor.notReady()};
+					if (params.ATS_WORK[0] === 1) {conveyor.motor.run()}; 
+					if (params.SW_STATUS[0] === 0) {conveyor.motor.alarm()};
 					if (params.ALR_SPEED[0] === 1) {conveyor.drum.alarm()} else {conveyor.drum.norm()};
 					conveyor.DKSL1.hide();
 					if (params.WRN_DKSL1[0] === 1) {conveyor.DKSL1.warning()};
@@ -69,12 +69,12 @@ newConveyor = function(conveyorSVG) {
 		req.send();
 	};
 
-	newsensorDrum = function(sensorSVG) {
-		sensorSVG.notReady = function() {sensorSVG.setAttribute('fill', 'orange')};
-		sensorSVG.ready = function() {sensorSVG.setAttribute('fill', 'blue')};
-		sensorSVG.run = function() {sensorSVG.setAttribute('fill', 'green')};
-		sensorSVG.alarm = function() {sensorSVG.setAttribute('fill', 'red')};
-		return sensorSVG;
+	newMotorDrum = function(motorSVG) {
+		motorSVG.notReady = function() {motorSVG.setAttribute('fill', 'orange')};
+		motorSVG.ready = function() {motorSVG.setAttribute('fill', 'blue')};
+		motorSVG.run = function() {motorSVG.setAttribute('fill', 'green')};
+		motorSVG.alarm = function() {motorSVG.setAttribute('fill', 'red')};
+		return motorSVG;
 	};
 
 	newTensionDrum = function(tensionSVG) {
@@ -84,15 +84,15 @@ newConveyor = function(conveyorSVG) {
 	}
 
 	let conveyor = conveyorSVG;
-	conveyor.sensor = newsensorDrum(conveyor.getElementsByClassName('CONVEYOR_sensor_DRUM_SHAPE')[0]);
+	conveyor.motor = newMotorDrum(conveyor.getElementsByClassName('CONVEYOR_MOTOR_DRUM_SHAPE')[0]);
 	conveyor.drum = newTensionDrum(conveyor.getElementsByClassName('CONVEYOR_TENSION_DRUM_SHAP')[0]);
 	conveyor.DKSL1 = newAd(conveyor.getElementsByClassName('LABEL')[0]);
 	conveyor.DKSL2 = newAd(conveyor.getElementsByClassName('LABEL')[1]);
 	conveyor.AS = newAd(conveyor.getElementsByClassName('LABEL')[2]);
-	conveyor.notReady = function() {conveyor.sensor.notReady()};
-	conveyor.ready = function() {conveyor.sensor.ready()};
-	conveyor.run = function() {conveyor.sensor.run()};
-	conveyor.alarm = function() {conveyor.sensor.alarm()};
+	conveyor.notReady = function() {conveyor.motor.notReady()};
+	conveyor.ready = function() {conveyor.motor.ready()};
+	conveyor.run = function() {conveyor.motor.run()};
+	conveyor.alarm = function() {conveyor.motor.alarm()};
 	
 	setInterval(requestProcessor, 5000);
 	
@@ -129,12 +129,12 @@ newElevator = function(elevator) {
 		req.send();
 	};
 
-	newsensor = function(sensor) {
-		sensor.notReady = function() {sensor.setAttribute('fill', 'orange')};
-		sensor.ready = function() {sensor.setAttribute('fill', 'blue')};
-		sensor.run = function() {sensor.setAttribute('fill', 'green')};
-		sensor.alarm = function() {sensor.setAttribute('fill', 'red')};
-		return sensor;
+	newMotor = function(motor) {
+		motor.notReady = function() {motor.setAttribute('fill', 'orange')};
+		motor.ready = function() {motor.setAttribute('fill', 'blue')};
+		motor.run = function() {motor.setAttribute('fill', 'green')};
+		motor.alarm = function() {motor.setAttribute('fill', 'red')};
+		return motor;
 	};
 
 	newChainBreakSensor = function(sensor) {
@@ -149,21 +149,21 @@ newElevator = function(elevator) {
 		return tray;
 	}
 
-	elevator.sensor = newsensor(elevator.getElementsByClassName('DRIVER_ANGLE_REDUCER_SHAPE')[0]);
+	elevator.motor = newMotor(elevator.getElementsByClassName('DRIVER_ANGLE_REDUCER_SHAPE')[0]);
 	elevator.chainBreakSensor = newChainBreakSensor(elevator.getElementsByClassName('CHAIN_BREAK_SENSOR')[0]);
 	elevator.tray = newInputTray(elevator.getElementsByClassName('ELEVATOR_INPUT_TRAY')[0]);
 	elevator.AS = newAd(elevator.getElementsByClassName('LABEL')[0]);
-	elevator.notReady = function() {elevator.sensor.notReady()};
-	elevator.ready = function() {elevator.sensor.ready()};
-	elevator.run = function() {elevator.sensor.run()};
-	elevator.alarm = function() {elevator.sensor.alarm()};
+	elevator.notReady = function() {elevator.motor.notReady()};
+	elevator.ready = function() {elevator.motor.ready()};
+	elevator.run = function() {elevator.motor.run()};
+	elevator.alarm = function() {elevator.motor.alarm()};
 	
 	setInterval(requestProcessor, 5000);
 	
 	return elevator;
 };
 
-//сито барабан
+//сушильный барабан
 
 newSeparatorDrum = function(drum) {
 	
@@ -178,68 +178,33 @@ newSeparatorDrum = function(drum) {
 				params = resp[agrId];
 				if (params) {
 					separator = document.getElementById(agrId);
-					if (params.ATS_RD[0] === 1) {separator.sensor.ready()} else {separator.sensor.notReady()};
-					if (params.ATS_WORK[0] === 1) {separator.sensor.run()}; 
-					if (params.SW_STATUS[0] === 0) {separator.sensor.alarm()};
+					if (params.ATS_RD[0] === 1) {separator.motor.ready()} else {separator.motor.notReady()};
+					if (params.ATS_WORK[0] === 1) {separator.motor.run()}; 
+					if (params.SW_STATUS[0] === 0) {separator.motor.alarm()};
 				};
 			};
 		};
 		req.send();
 	};
 
-	newsensor = function(sensor) {
-		sensor.notReady = function() {sensor.setAttribute('fill', 'orange')};
-		sensor.ready = function() {sensor.setAttribute('fill', 'blue')};
-		sensor.run = function() {sensor.setAttribute('fill', 'green')};
-		sensor.alarm = function() {sensor.setAttribute('fill', 'red')};
-		return sensor;
+	newMotor = function(motor) {
+		motor.notReady = function() {motor.setAttribute('fill', 'orange')};
+		motor.ready = function() {motor.setAttribute('fill', 'blue')};
+		motor.run = function() {motor.setAttribute('fill', 'green')};
+		motor.alarm = function() {motor.setAttribute('fill', 'red')};
+		return motor;
 	};
 
-	drum.sensor = newsensor(drum.getElementsByClassName('sensor_REDUCER_SHAPE')[0]);
+	drum.motor = newMotor(drum.getElementsByClassName('MOTOR_REDUCER_SHAPE')[0]);
 	drum.AS = newAd(drum.getElementsByClassName('LABEL')[0]);
 	drum.FS = newAd(drum.getElementsByClassName('LABEL')[1]);
-	drum.notReady = function() {drum.sensor.notReady()};
-	drum.ready = function() {drum.sensor.ready()};
-	drum.run = function() {drum.sensor.run()};
-	drum.alarm = function() {drum.sensor.alarm()};
+	drum.notReady = function() {drum.motor.notReady()};
+	drum.ready = function() {drum.motor.ready()};
+	drum.run = function() {drum.motor.run()};
+	drum.alarm = function() {drum.motor.alarm()};
 	
 	setInterval(requestProcessor, 5000);
 	
 	return drum;
 };
 
-//бункер
-
-newBunker = function(bunker) {
-	
-	requestProcessor = function() {
-		let req = new XMLHttpRequest();
-		req.open('GET', 'http://' + SERVER_LOCATION + '/data?AGR=' + bunker.id);
-		req.onreadystatechange = function() {
-			if(this.readyState === 4 && this.status === 200) {
-				resp = JSON.parse(this.response);
-				keys = Object.keys(resp);
-				agrId = keys[0];
-				params = resp[agrId];
-				if (params) {
-					bunker = document.getElementById(agrId);
-//					if (params.ATS_RD[0] === 1) {separator.sensor.ready()} else {separator.sensor.notReady()};
-				};
-			};
-		};
-		req.send();
-	};
-
-	newSensor = function(sensor) {
-		sensor.fillYes = function() {sensor.setAttribute('fill', 'orange')};
-		sensor.fillNo = function() {sensor.setAttribute('fill', 'red')};
-		return sensor;
-	};
-
-	bunker.sensorTop = newsensor(drum.getElementsByClassName('LEVEL_SENSOR')[0]);
-	bunker.sensorLow = newsensor(drum.getElementsByClassName('LEVEL_SENSOR')[1]);
-	
-	setInterval(requestProcessor, 5000);
-	
-	return bunker;
-};

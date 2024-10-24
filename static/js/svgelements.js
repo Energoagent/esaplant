@@ -106,15 +106,14 @@ newMill = function(elemId, initX, initY) {
 				keys = Object.keys(resp);
 				agrId = keys[0];
 				params = resp[agrId];
-console.log(params);
 				mill = mainUnit.getElementById(agrId);
 				if (mill) {
 					if (params.MILL_WORK[0] === 1) {mill.driver6Kv.run()} else {mill.driver6Kv.notReady()};
-					mill.PRESSURE_1.setText(params.PRESSURE_1[0][0] + 'кПа');
+					mill.PRESSURE_1.setText(params.PRESSURE_1[0] + 'кПа');
 					mill.P1_1_temperature.setText(params.P1_1_TEMP[0] + 'C°');
 					mill.P1_2_temperature.setText(params.P1_2_TEMP[0] + 'C°');
 					mill.P1_3_temperature.setText(params.P1_3_TEMP[0] + 'C°');
-					mill.PRESSURE_2.setText(params.PRESSURE_2[0][0] + 'кПа');
+					mill.PRESSURE_2.setText(params.PRESSURE_2[0] + 'кПа');
 					mill.P2_1_temperature.setText(params.P2_1_TEMP[0] + 'C°');
 					mill.P2_2_temperature.setText(params.P2_2_TEMP[0] + 'C°');
 					mill.P2_3_temperature.setText(params.P2_3_TEMP[0] + 'C°');
@@ -141,8 +140,8 @@ console.log(params);
 	mill.rotationRigth.hide();
 //	mill.temperatureAccident = mill.appendChild(newAd(PBP.x, PBP.y, 'Температура подшипника авария'));
 //	mill.driverRun = mill.appendChild(newAd(PBP.x, PBP.y + 6, 'Работа двигателя'));
-	mill.driverProtection = mill.appendChild(newAd(PBP.x + 120, PBP.y + 60, 'Срабатывание защиты'));
-	mill.accidentState = mill.appendChild(newAd(PBP.x + 120, PBP.y + 70, 'Аварийное состояние'));
+//	mill.driverProtection = mill.appendChild(newAd(PBP.x + 120, PBP.y + 60, 'Срабатывание защиты'));
+//	mill.accidentState = mill.appendChild(newAd(PBP.x + 120, PBP.y + 70, 'Аварийное состояние'));
 	mill.PRESSURE_1 = mill.appendChild(newAd(PBP.x + 30, PBP.y + 40, 'кПа'));
 	mill.P1_1_temperature = mill.appendChild(newAd(PBP.x + 70, PBP.y + 50, '0 C°'));
 	mill.P1_2_temperature = mill.appendChild(newAd(PBP.x + 70, PBP.y + 60, '0 C°'));
@@ -438,12 +437,8 @@ newConveyor = function(elemId, initMotorX, initMotorY, initDrumX, initDrumY) {
 	conveyor.ready = function() {conveyor.motor.ready()};
 	conveyor.run = function() {conveyor.motor.run()};
 	conveyor.alarm = function() {conveyor.motor.alarm()};
-	conveyor.info = document.createElement('p');
-	conveyor.onclick = function() {
-		infoDialog.innerHTML = `<div style="padding: 0; border: none;">агрегат ${conveyor.id}<br>состояние:<br>УПП - работа<br>скорость - 50%</div>`;
-		infoDialog.showModal();
-	};
-//	setInterval(requestProcessor, 5000);
+	
+	setInterval(requestProcessor, 5000);
 	
 	return conveyor;
 };

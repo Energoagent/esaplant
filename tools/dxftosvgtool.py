@@ -26,8 +26,8 @@ try:
             if blockIDattr:
                 x1 = round(attrPlacement[1][0])
                 y1 = round(attrPlacement[1][1])
-                svgText = f'<text x="{x1}" y="{y1}" style="font-size: 5">{blockIDattr.dxf.text}</text>\n'
-                outputSVG.write(svgText)
+#                svgText = f'<text x="{x1}" y="{y1}" style="font-size: 5">{blockIDattr.dxf.text}</text>\n'
+#                outputSVG.write(svgText)
             for ent in entity.virtual_entities():
                 nandleEntity(ent)
             svgBlock = '</g>\n'
@@ -80,8 +80,8 @@ try:
             placement = entity.get_placement()
             x1 = round(placement[1][0])
             y1 = round(placement[1][1])
-            svgText = f'<text class="LABEL" x="{x1}" y="{y1}" style="font-size: 5">{entity.dxf.text}</text>\n'
-            outputSVG.write(svgText)
+# временно заглушил            svgText = f'<text class="LABEL" x="{x1}" y="{y1}" style="font-size: 5">{entity.dxf.text}</text>\n'
+#            outputSVG.write(svgText)
     
     for e in msp: 
         nandleEntity(e)

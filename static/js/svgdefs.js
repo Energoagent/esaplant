@@ -628,3 +628,254 @@ const DRYAER_UNIT_SHAPE =
 </g>
 </g>
 </g>`
+
+
+const MILL_UNIT_SHAPE =
+`<g fill="none" stroke="black" stroke-width="0.5">
+<path d="M 184 305 L 189 305 L 189 325 L 184 325 L 184 305 "/>
+<path d="M 189 342 L 189 285 L 356 285 L 356 342 L 189 342 L 189 342 "/>
+<path d="M 369 344 L 384 344 L 384 349 L 369 349 L 369 344 "/>
+<path d="M 362 305 L 367 305 L 367 325 L 362 325 L 362 305 "/>
+<path d="M 356 347 L 362 347 L 362 281 L 356 281 L 356 347 "/>
+<path d="M 154 302 L 156 304 L 158 302 L 154 302 "/>
+<line x1="156" y1="302" x2="156" y2="294"/>
+<path d="M 372 330 L 381 330 L 381 344 L 372 344 L 372 330 "/>
+<g class="BEARING" id="rigth">
+<text x="380" y="301" style="font-size: 5">rigth</text>
+<path d="M 367 330 L 386 330 L 386 299 L 367 299 L 367 330 "/>
+<g class="TEMPERATURE_SENSOR" >
+<path d="M 368 301 L 385 301 L 385 308 L 368 308 L 368 301 "/>
+<text class="LABEL" x="-369" y="307" style="font-size: 5">t</text>
+</g>
+<g class="TEMPERATURE_SENSOR" >
+<path d="M 368 310 L 385 310 L 385 317 L 368 317 L 368 310 "/>
+<text class="LABEL" x="-369" y="316" style="font-size: 5">t</text>
+</g>
+<g class="TEMPERATURE_SENSOR" >
+<path d="M 368 319 L 385 319 L 385 326 L 368 326 L 368 319 "/>
+<text class="LABEL" x="-369" y="325" style="font-size: 5">t</text>
+</g>
+</g>
+<path d="M 167 344 L 182 344 L 182 349 L 167 349 L 167 344 "/>
+<path d="M 170 330 L 179 330 L 179 344 L 170 344 L 170 330 "/>
+<g class="BEARING" id="rigth">
+<text x="178" y="301" style="font-size: 5">rigth</text>
+<path d="M 165 330 L 184 330 L 184 299 L 165 299 L 165 330 "/>
+<g class="TEMPERATURE_SENSOR" >
+<path d="M 166 301 L 183 301 L 183 308 L 166 308 L 166 301 "/>
+<text class="LABEL" x="-167" y="307" style="font-size: 5">t</text>
+</g>
+<g class="TEMPERATURE_SENSOR" >
+<path d="M 166 310 L 183 310 L 183 317 L 166 317 L 166 310 "/>
+<text class="LABEL" x="-167" y="316" style="font-size: 5">t</text>
+</g>
+<g class="TEMPERATURE_SENSOR" >
+<path d="M 166 319 L 183 319 L 183 326 L 166 326 L 166 319 "/>
+<text class="LABEL" x="-167" y="325" style="font-size: 5">t</text>
+</g>
+</g>
+<path d="M 165 306 L 151 306 L 151 317 L 165 325 "/>
+<g class="CONVEYOR" id="1_5">
+<text x="130" y="298" style="font-size: 5">1_5</text>
+<line x1="104" y1="318" x2="150" y2="298"/>
+<line x1="100" y1="308" x2="146" y2="288"/>
+<g class="CONVEYOR_MOTOR_DRUM" >
+<circle cx="148" cy="293" r="5"/>
+<line x1="149" y1="295" x2="147" y2="291"/>
+<line x1="146" y1="294" x2="150" y2="292"/>
+<circle cx="148" cy="293" r="4"/>
+<circle cx="148" cy="293" r="1"/>
+<path d="M 147 296 L 151 294 L 148 289 L 145 290 L 147 296 "/>
+<path d="M 145 290 L 147 289 L 147 288 L 145 289 L 145 290 "/>
+</g>
+<g class="CONVEYOR_TENSION_DRUM" >
+<circle cx="102" cy="313" r="5"/>
+<line x1="103" y1="315" x2="101" y2="311"/>
+<line x1="100" y1="314" x2="104" y2="312"/>
+<line x1="104" y1="311" x2="105" y2="313"/>
+<line x1="105" y1="313" x2="105" y2="311"/>
+<line x1="105" y1="311" x2="107" y2="312"/>
+<line x1="107" y1="312" x2="107" y2="310"/>
+<line x1="107" y1="310" x2="109" y2="311"/>
+<line x1="109" y1="311" x2="109" y2="309"/>
+<path d="M 102 314 L 104 313 L 104 311 L 101 313 L 102 314 "/>
+<path d="M 110 311 L 113 310 L 112 308 L 109 309 L 110 311 "/>
+<circle cx="102" cy="313" r="4"/>
+</g>
+<g class="TAPE_BREAK_SENSOR" id="DKSL1">
+<text x="148" y="291" style="font-size: 5">DKSL1</text>
+<path d="M 138 291 L 146 288 A 6, 6 0 0, 1 150, 298 L 143 302 L 138 291 "/>
+</g>
+<g class="TAPE_BREAK_SENSOR" id="DKSL2">
+<text x="110" y="307" style="font-size: 5">DKSL2</text>
+<path d="M 107 304 L 100 308 A 6, 6 0 0, 0 105, 319 L 112 315 L 107 304 "/>
+</g>
+<g class="ES" id="stop_cable">
+<text x="128" y="303" style="font-size: 5">stop_cable</text>
+<circle cx="126" cy="303" r="3"/>
+</g>
+<g class="ES" id="local_control">
+<text x="150" y="287" style="font-size: 5">local_control</text>
+<circle cx="147" cy="287" r="3"/>
+</g>
+<g class="ES" id="add_stop">
+<text x="100" y="308" style="font-size: 5">add_stop</text>
+<circle cx="98" cy="308" r="3"/>
+</g>
+</g>
+<path d="M 98 302 L 100 304 L 102 302 L 98 302 "/>
+<line x1="100" y1="302" x2="100" y2="294"/>
+<g class="BUNKER_1_4" id="1_4">
+<text x="79" y="206" style="font-size: 5">1_4</text>
+<path d="M 75 202 L 125 202 L 125 262 L 75 262 L 75 202 "/>
+<path d="M 75 262 L 95 292 L 105 292 L 125 262 "/>
+<g class="LEVEL_SENSOR" id="1_4B1">
+<text x="-122" y="211" style="font-size: 5">1_4B1</text>
+<circle cx="118" cy="210" r="3"/>
+<path d="M 118 213 L 115 210 L 121 210 L 118 213 "/>
+</g>
+<g class="LEVEL_SENSOR" id="1_4B2">
+<text x="-122" y="234" style="font-size: 5">1_4B2</text>
+<circle cx="118" cy="233" r="3"/>
+<path d="M 118 236 L 115 233 L 121 233 L 118 236 "/>
+</g>
+<g class="LEVEL_SENSOR" id="1_4B3">
+<text x="-122" y="257" style="font-size: 5">1_4B3</text>
+<circle cx="118" cy="256" r="3"/>
+<path d="M 118 259 L 115 256 L 121 256 L 118 259 "/>
+</g>
+<g class="LEVEL_SENSOR" id="1_4B4">
+<text x="-105" y="281" style="font-size: 5">1_4B4</text>
+<circle cx="101" cy="280" r="3"/>
+<path d="M 101 283 L 98 280 L 104 280 L 101 283 "/>
+</g>
+</g>
+<path d="M 47 200 L 67 200 L 67 330 L 47 330 L 47 200 "/>
+<path d="M 47 200 L 47 183 A 13, 13 0 0, 1 73, 184 L 82 197 L 67 197 L 67 200 L 47 200 "/>
+<g class="DRIVER_ANGLE_REDUCER_SHAPE" >
+<path d="M 53 178 L 55 178 L 55 184 L 53 184 L 53 178 "/>
+<path d="M 55 176 L 65 176 L 65 186 L 55 186 L 55 176 "/>
+<circle cx="60" cy="181" r="4"/>
+<line x1="60" y1="179" x2="60" y2="183"/>
+<line x1="58" y1="181" x2="62" y2="181"/>
+<circle cx="60" cy="181" r="1"/>
+<path d="M 42 184 L 43 184 L 43 185 L 42 185 L 42 184 "/>
+<path d="M 46 184 L 45 184 L 45 185 L 46 185 L 46 184 "/>
+<path d="M 53 187 L 36 187 A 1, 1 0 0, 1 35, 186 L 35 176 A 1, 1 0 0, 1 36, 175 L 53 175 L 53 187 "/>
+<line x1="37" y1="175" x2="37" y2="187"/>
+<line x1="37" y1="176" x2="51" y2="176"/>
+<line x1="37" y1="186" x2="51" y2="186"/>
+<line x1="37" y1="178" x2="40" y2="178"/>
+<line x1="37" y1="184" x2="40" y2="184"/>
+<line x1="49" y1="178" x2="51" y2="178"/>
+<line x1="49" y1="184" x2="51" y2="184"/>
+<path d="M 42 184 A 1, 1 0 0, 1 41, 183 L 41 179 A 1, 1 0 0, 1 42, 178 L 46 178 A 1, 1 0 0, 1 47, 179 L 47 183 A 1, 1 0 0, 1 46, 184 L 42 184 "/>
+</g>
+<g class="CHAIN_BREAK_SENSOR" >
+<circle cx="57" cy="340" r="3"/>
+<path d="M 55 336 L 59 335 L 55 334 L 59 333 L 55 332 L 59 331 "/>
+<path d="M 55 336 L 59 336 L 59 341 L 55 341 L 55 336 "/>
+<path d="M 55 330 L 59 330 L 59 331 L 55 331 L 55 330 "/>
+</g>
+<g class="ELEVATOR_INPUT_TRAY" >
+<path d="M 32 330 L 67 330 L 67 350 L 44 350 L 32 330 "/>
+</g>
+<g class="ES" id="local_control">
+<text x="48" y="171" style="font-size: 5">local_control</text>
+<circle cx="50" cy="172" r="3"/>
+</g>
+<g class="ES" id="additional_control">
+<text x="56" y="319" style="font-size: 5">additional_control</text>
+<circle cx="58" cy="320" r="3"/>
+</g>
+<g class="BUNKER_GRAINER_BACK" id="2_20">
+<text x="225" y="122" style="font-size: 5">2_20</text>
+<path d="M 221 118 L 247 118 L 247 178 L 221 178 L 221 118 "/>
+<path d="M 221 178 L 230 188 L 238 188 L 247 178 "/>
+<g class="LEVEL_SENSOR" id="hi">
+<text x="-244" y="127" style="font-size: 5">hi</text>
+<circle cx="240" cy="126" r="3"/>
+<path d="M 240 129 L 237 126 L 243 126 L 240 129 "/>
+</g>
+<g class="LEVEL_SENSOR" id="low">
+<text x="-244" y="173" style="font-size: 5">low</text>
+<circle cx="240" cy="172" r="3"/>
+<path d="M 240 175 L 237 172 L 243 172 L 240 175 "/>
+</g>
+</g>
+<g class="BUNKER_GRAINER_MILL" id="1_17">
+<text x="187" y="123" style="font-size: 5">1_17</text>
+<path d="M 171 118 L 221 118 L 221 178 L 171 178 L 171 118 "/>
+<path d="M 171 178 L 191 188 L 201 188 L 221 178 "/>
+<g class="LEVEL_SENSOR" id="hi">
+<text x="-199" y="128" style="font-size: 5">hi</text>
+<circle cx="195" cy="127" r="3"/>
+<path d="M 195 130 L 192 127 L 198 127 L 195 130 "/>
+</g>
+<g class="LEVEL_SENSOR" id="low">
+<text x="-200" y="173" style="font-size: 5">low</text>
+<circle cx="196" cy="172" r="3"/>
+<path d="M 196 175 L 193 172 L 199 172 L 196 175 "/>
+</g>
+</g>
+<g class="BUNKER_GRAINER_BACK" id="2_21">
+<text x="301" y="122" style="font-size: 5">2_21</text>
+<path d="M 297 118 L 323 118 L 323 178 L 297 178 L 297 118 "/>
+<path d="M 297 178 L 306 188 L 314 188 L 323 178 "/>
+<g class="LEVEL_SENSOR" id="hi">
+<text x="-320" y="127" style="font-size: 5">hi</text>
+<circle cx="316" cy="126" r="3"/>
+<path d="M 316 129 L 313 126 L 319 126 L 316 129 "/>
+</g>
+<g class="LEVEL_SENSOR" id="low">
+<text x="-320" y="173" style="font-size: 5">low</text>
+<circle cx="316" cy="172" r="3"/>
+<path d="M 316 175 L 313 172 L 319 172 L 316 175 "/>
+</g>
+</g>
+<g class="BUNKER_GRAINER_MILL" id="1_18">
+<text x="263" y="123" style="font-size: 5">1_18</text>
+<path d="M 247 118 L 297 118 L 297 178 L 247 178 L 247 118 "/>
+<path d="M 247 178 L 267 188 L 277 188 L 297 178 "/>
+<g class="LEVEL_SENSOR" id="hi">
+<text x="-275" y="128" style="font-size: 5">hi</text>
+<circle cx="271" cy="127" r="3"/>
+<path d="M 271 130 L 268 127 L 274 127 L 271 130 "/>
+</g>
+<g class="LEVEL_SENSOR" id="low">
+<text x="-276" y="173" style="font-size: 5">low</text>
+<circle cx="272" cy="172" r="3"/>
+<path d="M 272 175 L 269 172 L 275 172 L 272 175 "/>
+</g>
+</g>
+<g class="BUNKER_GRAINER_BACK" id="2_22">
+<text x="377" y="122" style="font-size: 5">2_22</text>
+<path d="M 373 118 L 399 118 L 399 178 L 373 178 L 373 118 "/>
+<path d="M 373 178 L 382 188 L 390 188 L 399 178 "/>
+<g class="LEVEL_SENSOR" id="hi">
+<text x="-396" y="127" style="font-size: 5">hi</text>
+<circle cx="392" cy="126" r="3"/>
+<path d="M 392 129 L 389 126 L 395 126 L 392 129 "/>
+</g>
+<g class="LEVEL_SENSOR" id="low">
+<text x="-396" y="173" style="font-size: 5">low</text>
+<circle cx="392" cy="172" r="3"/>
+<path d="M 392 175 L 389 172 L 395 172 L 392 175 "/>
+</g>
+</g>
+<g class="BUNKER_GRAINER_MILL" id="1_19">
+<text x="339" y="123" style="font-size: 5">1_19</text>
+<path d="M 323 118 L 373 118 L 373 178 L 323 178 L 323 118 "/>
+<path d="M 323 178 L 343 188 L 353 188 L 373 178 "/>
+<g class="LEVEL_SENSOR" id="hi">
+<text x="-351" y="128" style="font-size: 5">hi</text>
+<circle cx="347" cy="127" r="3"/>
+<path d="M 347 130 L 344 127 L 350 127 L 347 130 "/>
+</g>
+<g class="LEVEL_SENSOR" id="low">
+<text x="-352" y="173" style="font-size: 5">low</text>
+<circle cx="348" cy="172" r="3"/>
+<path d="M 348 175 L 345 172 L 351 172 L 348 175 "/>
+</g>
+</g>
+</g>`
