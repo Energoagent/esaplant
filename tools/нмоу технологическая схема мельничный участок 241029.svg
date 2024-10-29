@@ -279,27 +279,27 @@
 </g>
 <path d="M 165 70 L 151 70 L 151 59 L 165 51 "/>
 </g>
-<g class="饰吐派判" id="2_7">
+<g class="袣袨袧袙袝袡袝袪" id="2_7">
 <text x="106" y="57" style="font-size: 5">2_7</text>
 <path d="M 104 61 L 117 61 L 117 56 L 104 56 L 104 61 "/>
 <g class="EMERGENCY_STOP" >
-<text class="LABEL" x="91" y="60" style="font-size: 5">姥</text>
+<text class="LABEL" x="91" y="60" style="font-size: 5">袗小</text>
 <path d="M 90 64 L 97 64 L 97 59 L 90 59 L 90 64 "/>
 </g>
 <g class="EMERGENCY_STOP" >
-<text class="LABEL" x="120" y="57" style="font-size: 5">姥</text>
+<text class="LABEL" x="120" y="57" style="font-size: 5">袗小</text>
 <path d="M 119 61 L 126 61 L 126 56 L 119 56 L 119 61 "/>
 </g>
 <g class="EMERGENCY_STOP" >
-<text class="LABEL" x="138" y="57" style="font-size: 5">姥</text>
+<text class="LABEL" x="138" y="57" style="font-size: 5">袗小</text>
 <path d="M 137 61 L 144 61 L 144 56 L 137 56 L 137 61 "/>
 </g>
 <g class="BELT_SENSOR" >
-<text class="LABEL" x="99" y="46" style="font-size: 5">氖阉</text>
+<text class="LABEL" x="99" y="46" style="font-size: 5">袛袣小袥</text>
 <path d="M 98 50 L 113 50 L 113 45 L 98 45 L 98 50 "/>
 </g>
 <g class="BELT_SENSOR" >
-<text class="LABEL" x="130" y="46" style="font-size: 5">氖阉</text>
+<text class="LABEL" x="130" y="46" style="font-size: 5">袛袣小袥</text>
 <path d="M 129 50 L 144 50 L 144 45 L 129 45 L 129 50 "/>
 </g>
 <g class="CONVEYOR_BELT" >

@@ -1,6 +1,5 @@
 import sys
 import ezdxf
-import codecs
 from sys import argv
 
 script, first = argv
@@ -8,7 +7,7 @@ script, first = argv
 
 try:
     inputDXF = ezdxf.readfile(first)
-    outputSVG = codecs.open(first.replace('dxf', 'svg'), 'w', encoding = 'cp1251')
+    outputSVG = open(first.replace('dxf', 'svg'), 'w', encoding = 'UTF-8')
     outputSVG.write('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
     outputSVG.write('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000" viewBox="0 0 1000 1000">\n')
     outputSVG.write('<g fill="none" stroke="black" stroke-width="0.5">\n')
