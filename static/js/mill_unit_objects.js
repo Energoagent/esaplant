@@ -24,6 +24,11 @@ newEmergencyStop = function(ES) {
 		ES.style.fill = 'black';
 		ES.style.display = 'none';
 	};
+	ES.noData = function() {
+		ES.style.stroke = 'gray';
+		ES.style.fill = 'gray';
+		ES.style.display = '';
+	};
 	return ES;
 }
 
@@ -52,13 +57,13 @@ newLamp = function(lamp) {
 			lamp.style.fill = 'gray';
 			lamp.style.display = '';
 		};
-		lamp.hyde = function() {
+		lamp.hide = function() {
 			lamp.style.stroke = 'black';
 			lamp.style.fill = 'black';
 			lamp.style.display = 'none';
 		};
 		lamp.turnOn = function() {
-			lamp.hyde()
+			lamp.hide()
 			if (lampType == 'LAMP_RED') {lamp.red();};
 			if (lampType == 'LAMP_GREEN') {lamp.green();};
 			if (lampType == 'LAMP_ORANGE') {lamp.orange();};
@@ -71,11 +76,20 @@ newLamp = function(lamp) {
 
 newActiveElement = function(el) {
 	if (el) {
+		el.red = function() {el.setAttribute('fill', 'red')};
+		el.orange = function() {el.setAttribute('fill', 'orange')};
+		el.green = function() {el.setAttribute('fill', 'green')};
+		el.gray = function() {el.setAttribute('fill', 'green')};
 		el.notReady = function() {el.setAttribute('fill', 'orange')};
-		el.ready = function() {el.setAttribute('fill', 'blue')};
+		el.ready = function() {el.setAttribute('fill', 'green')};
 		el.run = function() {el.setAttribute('fill', 'green')};
 		el.alarm = function() {el.setAttribute('fill', 'red')};
 		el.norm = function() {el.setAttribute('fill', 'gray')};
+		el.hide = function() {
+			el.style.stroke = 'black';
+			el.style.fill = 'black';
+			el.style.display = 'none';
+		};
 	};
 	return el;
 };
@@ -83,7 +97,10 @@ newActiveElement = function(el) {
 
 // ленточный транспортер
 
-newConveyor = function(conveyor) {
+
+// еще один ленточный транспортер - 2
+
+newConveyor2 = function(conveyor) {
 
 	requestProcessor = function() {
 		let req = new XMLHttpRequest();
@@ -96,21 +113,32 @@ newConveyor = function(conveyor) {
 				params = resp[agrId];
 				if (params) {
 					conveyor = document.getElementById(agrId);
-					if (params.ATS_RD[0] === 1) {conveyor.motor.ready()} else {conveyor.motor.notReady()};
-					if (params.ATS_WORK[0] === 1) {conveyor.motor.run()}; 
-					if (params.SW_STATUS[0] === 0) {conveyor.motor.alarm()};
-					if (params.ALR_SPEED[0] === 1) {conveyor.drum.alarm()} else {conveyor.drum.norm()};
+					if (params.ATS_RD[0] == 1) {conveyor.motor.green()} else {conveyor.motor.orange()};
+					if (params.ATS_RD[2] == 'InValid') {conveyor.motor.gray()};
+					if (params.ATS_WORK[0] == 1) {conveyor.belt.green()}; 
+					if (params.ATS_WORK[2] == 'InValid') {conveyor.belt.gray()}; 
+					if (params.SW_STATUS[0] == 0) {conveyor.motor.alarm()};
+					if (params.SW_STATUS[2] == 'InValid') {conveyor.motor.gray()};
+					if (params.ALR_SPEED[0] == 1) {conveyor.belt.alarm()} else {conveyor.belt.norm()};
+					if (params.ALR_SPEED[2] == 'InValid') {conveyor.belt.gray()};
 					conveyor.DKSL1.norm();
-					if (params.WRN_DKSL1[0] === 1) {conveyor.DKSL1.warning()};
-					if (params.ALR_DKSL1[0] === 1) {conveyor.DKSL1.alarm()}
+					if (params.WRN_DKSL1[0] == 1) {conveyor.DKSL1.warning()};
+					if (params.ALR_DKSL1[0] == 1) {conveyor.DKSL1.alarm()}
+					if (params.WRN_DKSL1[2] == 'InValid') {conveyor.DKSL1.noData()};
+					if (params.ALR_DKSL1[2] == 'InValid') {conveyor.DKSL1.noData()}
 					conveyor.DKSL2.norm();
-					if (params.WRN_DKSL2[0] === 1) {conveyor.DKSL2.warning()};
-					if (params.ALR_DKSL2[0] === 1) {conveyor.DKSL2.alarm()}
-					if (params.ES_MPU[0] === 1) {conveyor.localES.alarm()} else {conveyor.localES.norm()};
-					if (params.ES_ATV[0] === 1) {conveyor.stopCable.alarm()} else {conveyor.stopCable.norm()};
-					if (params.ES_EXT[0] === 1) {conveyor.additionalES.alarm()} else {conveyor.additionalES.norm()};
-					if (conveyor.lampWork) {if (params.GREEN_LP[0] === 1) {conveyor.lampWork.green()}};
-					if (conveyor.lampAlarm) {if (params.RED_LP[0] === 1) {conveyor.lampAlarm.orange()}};
+					if (params.WRN_DKSL2[0] == 1) {conveyor.DKSL2.warning()};
+					if (params.ALR_DKSL2[0] == 1) {conveyor.DKSL2.alarm()}
+					if (params.WRN_DKSL2[2] == 'InValid') {conveyor.DKSL2.noData()};
+					if (params.ALR_DKSL2[2] == 'InValid') {conveyor.DKSL2.noData()}
+					if (params.ES_MPU[0] == 1) {conveyor.localES.alarm()} else {conveyor.localES.norm()};
+					if (params.ES_MPU[2] == 'InValid') {conveyor.localES.noData()};
+					if (params.ES_ATV[0] == 1) {conveyor.stopCable.alarm()} else {conveyor.stopCable.norm()};
+					if (params.ES_ATV[2] == 'InValid') {conveyor.stopCable.noData()};
+					if (params.ES_EXT[0] == 1) {conveyor.additionalES.alarm()} else {conveyor.additionalES.norm()};
+					if (params.ES_EXT[2] == 'InValid') {conveyor.additionalES.noData()};
+//					if (conveyor.lampWork) {if (params.GREEN_LP[0] === 1) {conveyor.lampWork.green()}};
+//					if (conveyor.lampAlarm) {if (params.RED_LP[0] === 1) {conveyor.lampAlarm.orange()}};
 				};
 			};
 		};
@@ -118,20 +146,19 @@ newConveyor = function(conveyor) {
 	};
 
 
-	conveyor.motor = newActiveElement(conveyor.getElementsByClassName('CONVEYOR_MOTOR_DRUM')[0]);
-	conveyor.drum = newActiveElement(conveyor.getElementsByClassName('CONVEYOR_TENSION_DRUM')[0]);
-	conveyor.DKSL1 = newEmergencyStop(conveyor.getElementsByClassName('TAPE_BREAK_SENSOR')[0]);
-	conveyor.DKSL2 = newEmergencyStop(conveyor.getElementsByClassName('TAPE_BREAK_SENSOR')[1]);
-	conveyor.stopCable = newEmergencyStop(conveyor.getElementsByClassName('ES')[0]);
-	conveyor.localES = newEmergencyStop(conveyor.getElementsByClassName('ES')[1]);
-	conveyor.additionalES = newEmergencyStop(conveyor.getElementsByClassName('ES')[2]);
-	conveyor.lampAlarm = newLamp(document.getElementById(conveyor.id + '_ALARM'));
-	conveyor.lampWork = newLamp(document.getElementById(conveyor.id + '_WORK'));
+	conveyor.motor = newActiveElement(conveyor.getElementsByClassName('CONVEYOR_MOTOR_DRUM_2')[0]);
+	conveyor.belt = newActiveElement(conveyor.getElementsByClassName('CONVEYOR_BELT')[0]);
+	conveyor.DKSL1 = newEmergencyStop(conveyor.getElementsByClassName('BELT_SENSOR')[0]);
+	conveyor.DKSL2 = newEmergencyStop(conveyor.getElementsByClassName('BELT_SENSOR')[1]);
+	conveyor.stopCable = newEmergencyStop(conveyor.getElementsByClassName('EMERGENCY_STOP')[0]);
+	conveyor.localES = newEmergencyStop(conveyor.getElementsByClassName('EMERGENCY_STOP')[1]);
+	conveyor.additionalES = newEmergencyStop(conveyor.getElementsByClassName('EMERGENCY_STOP')[2]);
 	
 	setInterval(requestProcessor, 5000);
 	
 	return conveyor;
 };
+
 
 // элеватор
 
@@ -189,13 +216,27 @@ newGrainBunker = function(bunker) {
 				params = resp[agrId];
 				if (params) {
 					bunker = document.getElementById(agrId);
-					if (params.HIGH[0] === 0) {bunker.hiLevel.fillBlue()}
-					else if (params.LOW[0] === 0) {bunker.lowLevel.fillBlue()}
-						else if (params.LOW[0] === 1) {bunker.lowLevel.fillRed()}
-							else {
-								bunker.lowLevel.hyde();
-								bunker.hiLevel.hyde()
-							};
+					if (params.HIGH[0] === 1) {
+						bunker.hiLevel.fillBlue()
+						bunker.hiSensor.green();
+						bunker.lowSensor.gray();
+					}
+					else if (params.LOW[0] === 1) {
+						bunker.hiSensor.gray();
+						bunker.middleLevel.fillBlue()
+						bunker.lowSensor.green();
+					}
+					else if (params.LOW[0] === 0) {
+						bunker.hiSensor.gray();
+						bunker.lowLevel.fillRed()
+						bunker.lowSensor.red();
+					}
+					else {
+						bunker.lowLevel.hide();
+						bunker.hiLevel.hide()
+						bunker.hiSensor.hide();
+						bunker.lowSensor.hide();
+					};
 				};
 			};
 		};
@@ -216,7 +257,7 @@ newGrainBunker = function(bunker) {
 				ind.style.fill = 'red';
 				ind.style.display = '';
 			};
-			ind.hyde = function() {
+			ind.hide = function() {
 				ind.style.stroke = 'black';
 				ind.style.fill = 'black';
 				ind.style.display = 'none';
@@ -227,11 +268,19 @@ newGrainBunker = function(bunker) {
 	
 	newLevelSensor = function(sensor) {
 		if (sensor) {
-			sensor.red = function() {sensor.setAttribute('fill', 'red')};
-			sensor.green = function() {sensor.setAttribute('fill', 'green')};
-			sensor.gray = function() {sensor.setAttribute('fill', 'gray')};
-			sensor.hyde = function() {
-				sensor.style.stroke = 'black';
+			sensor.red = function() {
+				sensor.setAttribute('fill', 'red');
+				sensor.style.display = '';
+			};
+			sensor.green = function() {
+				sensor.setAttribute('fill', 'green');
+				sensor.style.display = '';
+			};
+			sensor.gray = function() {
+				sensor.setAttribute('fill', 'gray');
+				sensor.style.display = '';
+				};
+			sensor.hide = function() {
 				sensor.style.fill = 'black';
 				sensor.style.display = 'none';
 			};
@@ -246,11 +295,11 @@ newGrainBunker = function(bunker) {
 	bunker.lowLevel = newLevelIndicator(bunker.getElementsByClassName(svgClass + '_LOW')[0]);
 	bunker.middleLevel = newLevelIndicator(bunker.getElementsByClassName(svgClass + '_MIDDLE')[0]);
 	bunker.hiLevel = newLevelIndicator(bunker.getElementsByClassName(svgClass + '_HI')[0]);
-	if (bunker.lowLevel) {bunker.lowLevel.hyde()};
-	if (bunker.middleLevel) {bunker.middleLevel.hyde()};
-	if (bunker.hiLevel) {bunker.hiLevel.hyde()};
-	if (bunker.hiSensor) {bunker.hiSensor.hyde()};
-	if (bunker.lowSensor) {bunker.lowSensor.hyde()};
+	if (bunker.lowLevel) {bunker.lowLevel.hide()};
+	if (bunker.middleLevel) {bunker.middleLevel.hide()};
+	if (bunker.hiLevel) {bunker.hiLevel.hide()};
+//	if (bunker.hiSensor) {bunker.hiSensor.hide()};
+//	if (bunker.lowSensor) {bunker.lowSensor.hide()};
 	
 	setInterval(requestProcessor, 5000);
 	

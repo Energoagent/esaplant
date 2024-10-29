@@ -37,6 +37,11 @@ div.row_block {
 	color: lightslategray;
 }
 
+text.LABEL {
+	font: 5px arial;
+	font-weight: 200;
+}
+
 /* SVG */
 
 text.parameters {

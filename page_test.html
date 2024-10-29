@@ -7,7 +7,6 @@
 		<link rel="stylesheet" href="./static/css/styles.css">
 		<script src="./static/js/scripts.js"></script>
 		<script src="./static/js/svgelements.js"></script>
-		<script src="./static/js/svgdefs.js"></script>
 	</head>
 <!--	<body class="text_summary" onresize="svgScale();" onload="svgScale();">-->
 	<body class="text_summary">
@@ -18,7 +17,6 @@
 		</div>
 		<div>
 			<svg id="mainUnit" xmlns="http://www.w3.org/2000/svg"  width="1832" height="1008" viewBox="-1 -1 1834 1010" version="1.1">
-				<defs></defs>
 				<script>
 //					setDefs();
 //					drawPixelGrid(mainUnit, 50, 50);
@@ -44,12 +42,12 @@
 					screw_1_101 = mainUnit.appendChild(newScrew('1_101', 350, 150, 300, 170));
 					screw_1_102 = mainUnit.appendChild(newScrew('1_102', 400, 150, 350, 170));
 					screw_1_11 = mainUnit.appendChild(newScrew('1_11', 450, 150, 400, 170));
-					screw_1_12 = mainUnit.appendChild(newScrew('AGR_1_12', 500, 150, 450, 170));
-					screw_1_13 = mainUnit.appendChild(newScrew('AGR_1_13', 700, 80, 500, 170));
-					screw_1_131 = mainUnit.appendChild(newScrew('AGR_1_131', 750, 80, 700, 100));
-					screw_1_132 = mainUnit.appendChild(newScrew('AGR_1_132', 800, 80, 750, 100));
-					screw_1_133 = mainUnit.appendChild(newScrew('AGR_1_133', 850, 80, 800, 100));
-					screw_1_134 = mainUnit.appendChild(newScrew('AGR_1_134', 900, 80, 850, 100));
+					screw_1_12 = mainUnit.appendChild(newScrew('1_12', 500, 150, 450, 170));
+					screw_1_13 = mainUnit.appendChild(newScrew('1_13', 700, 80, 500, 170));
+					screw_1_131 = mainUnit.appendChild(newScrew('1_131', 750, 80, 700, 100));
+					screw_1_132 = mainUnit.appendChild(newScrew('1_132', 800, 80, 750, 100));
+					screw_1_133 = mainUnit.appendChild(newScrew('1_133', 850, 80, 800, 100));
+					screw_1_134 = mainUnit.appendChild(newScrew('1_134', 900, 80, 850, 100));
 
 // обратка
 					conveior_1_21 = mainUnit.appendChild(newConveyor('1_21', 600, 300, 500, 330));

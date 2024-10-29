@@ -1,5 +1,6 @@
 import sys
 import ezdxf
+import codecs
 from sys import argv
 
 script, first = argv
@@ -7,14 +8,14 @@ script, first = argv
 
 try:
     inputDXF = ezdxf.readfile(first)
-    outputSVG = open(first.replace('dxf', 'svg'), 'w')
+    outputSVG = codecs.open(first.replace('dxf', 'svg'), 'w', encoding = 'cp1251')
     outputSVG.write('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
     outputSVG.write('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000" viewBox="0 0 1000 1000">\n')
     outputSVG.write('<g fill="none" stroke="black" stroke-width="0.5">\n')
 
     msp = inputDXF.modelspace()
 
-    def nandleEntity(entity):
+    def handleEntity(entity):
         if entity.dxftype() == 'INSERT':
             svgBlock = f'<g class="{entity.dxf.name}" '
             blockIDattr = entity.get_attrib('ID')
@@ -26,10 +27,10 @@ try:
             if blockIDattr:
                 x1 = round(attrPlacement[1][0])
                 y1 = round(attrPlacement[1][1])
-#                svgText = f'<text x="{x1}" y="{y1}" style="font-size: 5">{blockIDattr.dxf.text}</text>\n'
-#                outputSVG.write(svgText)
+                svgText = f'<text x="{x1}" y="{y1}" style="font-size: 5">{blockIDattr.dxf.text}</text>\n'
+                outputSVG.write(svgText)
             for ent in entity.virtual_entities():
-                nandleEntity(ent)
+                handleEntity(ent)
             svgBlock = '</g>\n'
             outputSVG.write(svgBlock)
         if entity.dxftype() == 'LINE':
@@ -80,11 +81,11 @@ try:
             placement = entity.get_placement()
             x1 = round(placement[1][0])
             y1 = round(placement[1][1])
-# временно заглушил            svgText = f'<text class="LABEL" x="{x1}" y="{y1}" style="font-size: 5">{entity.dxf.text}</text>\n'
-#            outputSVG.write(svgText)
+            svgText = f'<text class="LABEL" x="{x1}" y="{y1}" style="font-size: 5">{entity.dxf.text}</text>\n'
+            outputSVG.write(svgText)
     
     for e in msp: 
-        nandleEntity(e)
+        handleEntity(e)
           
     outputSVG.write('</g>\n</svg>')
     outputSVG.close()

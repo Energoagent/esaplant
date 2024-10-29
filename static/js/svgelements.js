@@ -697,12 +697,15 @@ newScrew = function(elemId, initMotorX, initMotorY, initSupplyX, initSupplyY) {
 				agrId = keys[0];
 				params = resp[agrId];
 				let screw = mainUnit.getElementById(agrId);
-				if (screw) {
+				if (params) {
 					if (params.ATS_RD[0] === 1) {screw.motor.ready()} else {screw.motor.notReady()};
 					if (params.ATS_WORK[0] === 1) {screw.motor.run()}; 
 					if (params.SW_STATUS[0] === 0) {screw.motor.alarm()};
 					if (params.ES_MPU[0] === 1) {screw.ES_MPU.alarm()} else {screw.ES_MPU.hide()};
 					if (params.ES_EXT[0] === 1) {screw.ES_EXT.alarm()} else {screw.ES_EXT.hide()};
+				}
+				else {
+console.log(agrId);					
 				};
 			};
 		};
